@@ -1,4 +1,4 @@
-export default function Header({ busqueda, setBusqueda, cantidad, abrirCarrito }) {
+export default function CartHeader({ busqueda, setBusqueda, cantidad, abrirCarrito }) {
   return (
     <header className="header">
       <a className="logo" href="/">
@@ -9,7 +9,7 @@ export default function Header({ busqueda, setBusqueda, cantidad, abrirCarrito }
         type="search"
         placeholder="Buscar productos..."
         value={busqueda}
-        onChange={(e) => setBusqueda(e.target.value)}
+        onChange={(event) => setBusqueda(event.target.value)}
         aria-label="Buscar productos"
       />
       <button className="btn-carrito" onClick={abrirCarrito}>

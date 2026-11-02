@@ -3,7 +3,6 @@
   margin: 0 auto;
   padding: 24px;
   text-align: left;
-  font-family: system-ui, sans-serif;
 }
 
 .grilla {
@@ -13,18 +12,18 @@
 }
 
 .tarjeta {
-  border: 1px solid #ddd;
-  border-radius: 12px;
+  border: 1px solid rgba(13, 11, 16, 0.12);
+  border-radius: 8px;
   padding: 12px;
-  background: #fff;
-  color: #222;
+  background: #FFFFFF;
+  color: #0D0B10;
 }
 
 .tarjeta img {
   width: 100%;
   aspect-ratio: 1;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 .tarjeta h2 {
@@ -39,7 +38,7 @@
 
 .descripcion {
   font-size: 0.85rem;
-  color: #555;
+  color: rgba(13, 11, 16, 0.7);
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 4;
@@ -53,7 +52,7 @@
 }
 
 .estado.error {
-  color: crimson;
+  color: #DF1F25;
 }
 
 .debug {
@@ -61,10 +60,10 @@
 }
 
 .debug pre {
-  background: #111;
-  color: #0f0;
+  background: #0D0B10;
+  color: #FFFFFF;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: auto;
   max-height: 400px;
   font-size: 12px;

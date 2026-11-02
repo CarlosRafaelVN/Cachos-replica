@@ -1,11 +1,15 @@
 @import "tailwindcss";
 
+@theme {
+  --color-black: #0D0B10;
+}
+
 :root {
   font-family: Inter, 'Segoe UI', sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: #111111;
-  background: #f5f2ee;
+  color: #0D0B10;
+  background: #FFFFFF;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -23,7 +27,7 @@ html {
 body {
   margin: 0;
   min-width: 320px;
-  background: #f5f2ee;
+  background: #FFFFFF;
 }
 
 a {
@@ -45,4 +49,42 @@ select {
 
 #root {
   min-height: 100vh;
+  background: #FFFFFF;
+  color: #0D0B10;
+}
+
+.announcement-bar {
+  overflow: hidden;
+  background: #DF1F25;
+  color: #FFFFFF;
+}
+
+.announcement-track {
+  display: flex;
+  width: max-content;
+  animation: announcement-scroll 32s linear infinite;
+}
+
+.announcement-group {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 3rem;
+  min-height: 42px;
+  padding: 0 1.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+@keyframes announcement-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .announcement-track {
+    animation: none;
+  }
 }
