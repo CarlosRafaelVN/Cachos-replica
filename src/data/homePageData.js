@@ -61,61 +61,86 @@ export const bestSellers = [
 ];
 
 export const personas = [
-  { label: 'MUJER', title: 'Tenis, botas y sandalias de las marcas que más te gustan.', href: '#', accent: 'Mujer' },
-  { label: 'HOMBRE', title: 'Del skate a la montaña: encontrá tu par para todos los días.', href: '#', accent: 'Hombre' },
-  { label: 'NIÑOS', title: 'Tenis para la escuela y el juego, en todas las tallas.', href: '#', accent: 'Niños' },
-  { label: 'OFERTAS', title: 'Estilos seleccionados con descuento, solo en línea.', href: '#', accent: 'Ver ofertas' },
+  {
+    label: 'MUJER',
+    title: 'Tenis, botas y sandalias de las marcas que más te gustan.',
+    href: '/catalog?productType=Calzado&gender=FEMENINO&gender=UNISEX',
+    accent: 'Comprar ahora',
+    image: 'https://cms.blumewebsites.com/cachos/website/ru-mujer.jpg',
+    alt: 'Mujer con botas y falda de mezclilla',
+  },
+  {
+    label: 'HOMBRE',
+    title: 'Del skate a la montaña: encontrá tu par para todos los días.',
+    href: '/catalog?productType=CALZADO&gender=MASCULINO&gender=UNISEX',
+    accent: 'Comprar ahora',
+    image: 'https://cms.blumewebsites.com/cachos/website/ru-hombre.jpg',
+    alt: 'Hombre con chaqueta de cuero y botas',
+  },
+  {
+    label: 'NIÑOS',
+    title: 'Tenis para la escuela y el juego, en todas las tallas.',
+    href: '/catalog?productType=CALZADO&gender=NI%C3%91O(A)',
+    accent: 'Comprar ahora',
+    image: 'https://cms.blumewebsites.com/cachos/website/ru-ninos2.jpg',
+    alt: 'Tenis Converse de niño rosados y negros de la colección Hello Kitty',
+  },
+  {
+    label: 'OFERTAS',
+    title: 'Estilos seleccionados con descuento, solo en línea.',
+    href: '/sale',
+    accent: 'Ver ofertas',
+    image: 'https://cms.blumewebsites.com/cachos/website/ru-ofertas.jpg',
+    alt: 'Tenis Converse rojos',
+    badge: '-30%',
+  },
 ];
 
 export const viralProducts = [
   {
     name: 'TENIS UNISEX NEW BALANCE 9060',
     price: 94900,
-    image:
-      'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=900&q=80',
+    image: 'https://cms.blumewebsites.com/cachos/website/mb-newbalance3.jpg',
+    video: 'https://cms.blumewebsites.com/cachos/website/cachos-video-5-new-balance-9060.webm',
+    href: '/product?referenceCode=10NBU9060&colorCode=2FD-GREY',
+    catalogHref: '/catalog?s=9060',
+    count: 3,
   },
   {
     name: 'TENIS FEMENINO ADIDAS VL COURT BOLD',
     price: 49900,
-    image:
-      'https://images.unsplash.com/photo-1543508282-6319a3e2621f?auto=format&fit=crop&w=900&q=80',
+    image: 'https://cms.blumewebsites.com/cachosasociacion/products/11ADIH9151BLUPNK/OWHITE/GUM3/11ADIH9151_BLUPNK@OWHITE@GUM3_1.avif?v=c94a2383748a469c827760a17a9d275d',
+    video: 'https://cms.blumewebsites.com/cachos/website/cachos-video-6-adidas.webm',
+    href: '/product?referenceCode=11ADIH9151&colorCode=BLUPNK%2FOWHITE%2FGUM3',
+    catalogHref: '/catalog?s=adidas%20vl%20court%20bold',
+    count: 4,
   },
   {
     name: 'TENIS MASCULINO NIKE INITIATOR',
-    price: 53900,
-    image:
-      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80',
-  },
-];
-
-export const saleProducts = [
-  {
-    name: 'TENIS EN OFERTA PUMA',
-    price: 27900,
-    oldPrice: 42900,
-    image:
-      'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=900&q=80',
+    price: 68900,
+    image: 'https://cms.blumewebsites.com/cachosasociacion/products/10NKHQ1179001-LT%20BONE/SMOKE%20GREY/COCONUT%20MIL/10NKHQ1179_001-LT%20BONE@SMOKE%20GREY@COCONUT%20MIL_2.avif?v=944ee92614554bfe8dfd14218678124f',
+    video: 'https://cms.blumewebsites.com/cachos/website/cachos-video-7-nike.webm',
+    href: '/product?referenceCode=10NKHQ1179&colorCode=001-LT%20BONE%2FSMOKE%20GREY%2FCOCONUT%20MIL',
+    catalogHref: '/catalog?s=nike%20initiator',
+    count: 4,
   },
   {
-    name: 'BOTAS CONVERSE LOW',
-    price: 34900,
-    oldPrice: 48900,
-    image:
-      'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=900&q=80',
+    name: 'TENIS MASCULINO PUMA SPEEDCAT OG',
+    price: 56900,
+    image: 'https://cms.blumewebsites.com/cachosasociacion/products/10PM39884601-PUMA%20BLACK%20PUMA%20WHITE/10PM398846_01-PUMABLACKPUMAWHITE_1.png?v=134021761067854889',
+    video: 'https://cms.blumewebsites.com/cachos/website/AQNhWsXXE3XA__bebowDtDSXYNTkNDa4hDwsMomc1JKbeKpgdZ1oZw1e87RQcArrzDrE2N8FZa4RGKmaW_kI9fJ54UxxsSzISaCC.webm',
+    href: '/product?referenceCode=10PM398846&colorCode=01-PUMA+BLACK+PUMA+WHITE',
+    catalogHref: '/catalog?s=speedcat',
+    count: 3,
   },
   {
-    name: 'SANDALIA VANS OLD SKOOL',
-    price: 39900,
-    oldPrice: 57900,
-    image:
-      'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=900&q=80',
-  },
-  {
-    name: 'GORRA QUIKSILVER',
-    price: 14900,
-    oldPrice: 21900,
-    image:
-      'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80',
+    name: 'TENIS FEMENINO PUMA SPEEDCAT BALLET SD',
+    price: 43900,
+    image: 'https://cms.blumewebsites.com/cachosasociacion/products/10PM39884601-PUMA%20BLACK%20PUMA%20WHITE/10PM398846_01-PUMABLACKPUMAWHITE_1.png?v=134021761067854889',
+    video: 'https://cms.blumewebsites.com/cachos/website/cachos-video-4-puma-speedcat.webm',
+    href: '/catalog?s=puma',
+    catalogHref: '/catalog?s=puma',
+    count: 3,
   },
 ];
 

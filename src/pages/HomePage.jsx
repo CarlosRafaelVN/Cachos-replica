@@ -6,6 +6,8 @@ import ContentCardsSection from '../components/home/ContentCardsSection.jsx';
 import BrandCarouselSection from '../components/home/BrandCarouselSection.jsx';
 import PairCardsSection from '../components/home/PairCardsSection.jsx';
 import ProductGridSection from '../components/home/ProductGridSection.jsx';
+import SaleFeatureSection from '../components/home/SaleFeatureSection.jsx';
+import ViralCarouselSection from '../components/home/ViralCarouselSection.jsx';
 import AnnouncementBar from '../components/layout/AnnouncementBar.jsx';
 import SiteFooter from '../components/layout/SiteFooter.jsx';
 import SiteHeader from '../components/layout/SiteHeader.jsx';
@@ -14,7 +16,6 @@ import {
   bestSellers,
   lookProducts,
   moreThanShoes,
-  saleProducts,
   viralProducts,
 } from '../data/homePageData.js';
 
@@ -35,15 +36,8 @@ export default function HomePage() {
         <BrandSection />
         <PairCardsSection />
         <AudienceSection />
-        <ProductGridSection title="Los más virales" products={viralProducts} columns={3} />
-        <ProductGridSection
-          title="Tus pares favoritos a mejor precio"
-          subtitle="Tenis, botas, sandalias y accesorios con descuento."
-          products={saleProducts}
-          categories={['Mujer', 'Hombre', 'Niños']}
-          saleAction="Ver todas las ofertas →"
-          saleLayout
-        />
+        <ViralCarouselSection products={viralProducts} />
+        <SaleFeatureSection />
         <ContentCardsSection title="Más que calzado" items={moreThanShoes} />
         <ProductGridSection
           title="Completá tu look"

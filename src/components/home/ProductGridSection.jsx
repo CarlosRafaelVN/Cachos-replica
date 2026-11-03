@@ -11,18 +11,13 @@ export default function ProductGridSection({
   products,
   subtitle,
   columns = 4,
-  categories = [],
-  saleAction,
-  saleLayout = false,
 }) {
   const bestSellersTrack = useRef(null);
-  const isBestSellers = title === 'Lo más buscado' && !saleLayout;
+  const isBestSellers = title === 'Lo más buscado';
 
-  const headerClass = saleLayout
-    ? 'mb-5 flex flex-col gap-4 md:flex-row md:items-end md:justify-between'
-    : isBestSellers
-      ? 'best-sellers__header'
-      : 'mb-6 flex items-end justify-between gap-4';
+  const headerClass = isBestSellers
+    ? 'best-sellers__header'
+    : 'mb-6 flex items-end justify-between gap-4';
 
   return (
     <section className={`mx-auto ${isBestSellers ? 'best-sellers-section' : 'max-w-[1600px] px-4 py-8 md:px-6 lg:py-12'}`}>
@@ -32,27 +27,14 @@ export default function ProductGridSection({
             {title}
           </h2>
           {subtitle && (
-            saleLayout ? (
-              <p className="mt-2 text-[0.84rem] text-black/70">{subtitle}</p>
-            ) : isBestSellers ? (
+            isBestSellers ? (
               <p className="best-sellers__subtitle">{subtitle}</p>
             ) : (
               <span className="text-[11px] uppercase tracking-[0.12em] text-black/60">{subtitle}</span>
             )
           )}
         </div>
-        {saleAction && (
-          <a href="#" className="inline-flex items-center justify-center rounded-full bg-[#DF1F25] px-5 py-3 text-[10px] font-black uppercase tracking-[0.1em] text-white transition hover:-translate-y-0.5">
-            {saleAction}
-          </a>
-        )}
       </div>
-
-      {categories.length > 0 && (
-        <div className="mb-5 flex flex-wrap gap-4 text-[10px] font-black uppercase tracking-[0.12em] text-black">
-          {categories.map((category) => <a href="#" key={category}>{category}</a>)}
-        </div>
-      )}
 
       {isBestSellers ? (
         <div className="best-sellers__carousel">
