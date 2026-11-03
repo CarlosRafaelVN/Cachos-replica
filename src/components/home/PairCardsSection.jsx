@@ -1,20 +1,97 @@
-import { pairCards } from '../../data/homePageData.js';
+import { useEffect, useState } from 'react';
+
+const trendingPairs = [
+  {
+    title: 'Dr. Martens Zebzag',
+    description: 'Dr. Martens Zebzag Mule: el clog de gamuza con la suela y la costura amarilla de siempre.',
+    image: 'https://cms.blumewebsites.com/cachos/website/mb-drmartens.jpg',
+    href: '/product?referenceCode=20DRM31737439&colorCode=SAVANNAH%20TAN',
+    action: 'Ver Zebzag Mule',
+  },
+  {
+    title: 'New Balance 9060',
+    description: 'New Balance 9060: suela chunky y diseño retro que está en todas partes.',
+    image: 'https://cms.blumewebsites.com/cachos/website/mb-newbalance3.jpg',
+    href: '/product?referenceCode=10NBU9060&colorCode=2FD-GREY',
+    action: 'Ver 9060',
+  },
+  {
+    title: 'Sperry A/O 2-Eye',
+    description: 'Sperry Authentic Original: el zapato náutico de cuero, un clásico desde 1935.',
+    image: 'https://cms.blumewebsites.com/cachos/website/mb-sperry.jpg',
+    href: '/product?referenceCode=10SP13934343&colorCode=BROWN%20PRIMARY%2FMULTI',
+    action: 'Ver Sperry A/O',
+  },
+  {
+    title: 'Birkenstock Arizona',
+    description: 'Birkenstock Arizona Big Buckle: la sandalia de siempre con hebillas XL.',
+    image: 'https://cms.blumewebsites.com/cachos/website/mb-birkenstock.jpg',
+    href: '/product?referenceCode=30BI1030504&colorCode=STONE%20COIN',
+    action: 'Ver Arizona',
+  },
+  {
+    title: 'Element Topaz',
+    description: 'Element Topaz: el tenis de skate en lona para el día a día.',
+    image: 'https://cms.blumewebsites.com/cachos/website/mb-element.jpg',
+    href: '/product?referenceCode=10ELMELSH200002&colorCode=IND-INDIGO',
+    action: 'Ver Topaz',
+  },
+];
 
 export default function PairCardsSection() {
+  const [activePair, setActivePair] = useState(1);
+  const pair = trendingPairs[activePair];
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+
+    const timer = window.setInterval(() => {
+      setActivePair((current) => (current + 1) % trendingPairs.length);
+    }, 6500);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
   return (
-    <section className="mx-auto max-w-[1600px] px-4 py-8 md:px-6 lg:py-12">
-      <h2 className="mb-6 text-[1.9rem] font-black uppercase leading-none tracking-[-0.07em] text-black md:text-[2.5rem]">Elegí tu próximo par</h2>
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {pairCards.map((pair) => (
-          <article key={pair.title} className="overflow-hidden rounded-[20px] border border-black/10 bg-white">
-            <div className="px-4 pb-3 pt-4">
-              <h3 className="text-[1.05rem] font-black leading-tight tracking-[-0.04em] text-black">{pair.title}</h3>
-              <p className="mt-2 text-[0.82rem] leading-5 text-black/70">{pair.subtitle}</p>
-              <a href="#" className="mt-4 inline-block text-[10px] font-black uppercase tracking-[0.12em] text-black">{pair.action}</a>
-            </div>
-            <img src={pair.image} alt={pair.title} loading="lazy" className="h-[260px] w-full object-cover" />
-          </article>
-        ))}
+    <section className="trending-pair" aria-label="Pares que marcan tendencia">
+      <div className="trending-pair__inner">
+        <div className="trending-pair__copy" aria-live="polite">
+          <span className="trending-pair__eyebrow">Las marcas que marcan tendencia</span>
+          <h2 className="trending-pair__title">Elegí tu<br /><em>próximo par</em></h2>
+          <p className="trending-pair__description">{pair.description}</p>
+          <div className="trending-pair__actions">
+            <a className="trending-pair__primary" href={pair.href}>{pair.action}</a>
+            <a className="trending-pair__secondary" href="/products">Ver catálogo</a>
+          </div>
+          <div className="trending-pair__pagination" aria-label="Elegir par destacado">
+            {trendingPairs.map((item, index) => (
+              <button
+                className={`trending-pair__dot${index === activePair ? ' is-active' : ''}`}
+                key={item.title}
+                type="button"
+                aria-label={`Ver ${item.title}`}
+                aria-pressed={index === activePair}
+                onClick={() => setActivePair(index)}
+              >
+                <span />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="trending-pair__stage">
+          <div className="trending-pair__circle" />
+          <img
+            key={pair.title}
+            className={`trending-pair__product trending-pair__product--${activePair + 1}`}
+            src={pair.image}
+            alt={pair.title}
+          />
+          <img className="trending-pair__star trending-pair__star--one" src="https://cms.blumewebsites.com/cachos/website/ck-star-negra.png" alt="" />
+          <img className="trending-pair__star trending-pair__star--two" src="https://cms.blumewebsites.com/cachos/website/ck-star-negra.png" alt="" />
+          <img className="trending-pair__star trending-pair__star--three" src="https://cms.blumewebsites.com/cachos/website/ck-star-negra.png" alt="" />
+          <span className="trending-pair__product-name">{pair.title}</span>
+        </div>
       </div>
     </section>
   );
