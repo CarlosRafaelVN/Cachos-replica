@@ -3,7 +3,7 @@ import BrandSection from '../components/home/BrandSection.jsx';
 import CampaignSection from '../components/home/CampaignSection.jsx';
 import CommunitySection from '../components/home/CommunitySection.jsx';
 import ContentCardsSection from '../components/home/ContentCardsSection.jsx';
-import HeroSection from '../components/home/HeroSection.jsx';
+import BrandCarouselSection from '../components/home/BrandCarouselSection.jsx';
 import PairCardsSection from '../components/home/PairCardsSection.jsx';
 import ProductGridSection from '../components/home/ProductGridSection.jsx';
 import AnnouncementBar from '../components/layout/AnnouncementBar.jsx';
@@ -25,7 +25,7 @@ export default function HomePage() {
       <AnnouncementBar />
 
       <main className="pb-16">
-        <HeroSection />
+        <BrandCarouselSection />
         <ProductGridSection
           title="Lo más buscado"
           subtitle="Los pares que más se están llevando esta semana."

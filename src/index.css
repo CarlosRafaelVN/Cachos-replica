@@ -53,6 +53,248 @@ select {
   color: #0D0B10;
 }
 
+.brand-carousel {
+  overflow: hidden;
+  background: #0D0B10;
+  color: #FFFFFF;
+}
+
+.brand-carousel__hero {
+  position: relative;
+  isolation: isolate;
+  min-height: 590px;
+  overflow: hidden;
+  background: #0D0B10;
+}
+
+.brand-carousel__image,
+.brand-carousel__shade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.brand-carousel__image {
+  z-index: -2;
+  object-fit: cover;
+  animation: brand-slide-enter 600ms ease both;
+}
+
+.brand-carousel__shade {
+  z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(13, 11, 16, 0.96) 0%, rgba(13, 11, 16, 0.82) 31%, rgba(13, 11, 16, 0.23) 67%, rgba(13, 11, 16, 0.08) 100%),
+    linear-gradient(0deg, rgba(13, 11, 16, 0.45), transparent 25%);
+}
+
+.brand-carousel__content {
+  width: min(100% - 3rem, 1600px);
+  min-height: 590px;
+  margin: 0 auto;
+  padding: 100px 0 124px;
+}
+
+.brand-carousel__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--slide-accent);
+  color: #0D0B10;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.brand-carousel__title {
+  max-width: 520px;
+  margin: 20px 0 10px;
+  font-size: clamp(3rem, 5vw, 4.7rem);
+  font-weight: 950;
+  letter-spacing: -0.075em;
+  line-height: 0.88;
+  text-transform: uppercase;
+}
+
+.brand-carousel__title span {
+  color: var(--slide-accent);
+}
+
+.brand-carousel__description {
+  max-width: 440px;
+  margin: 18px 0 0;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 0.94rem;
+  font-weight: 600;
+  line-height: 1.65;
+}
+
+.brand-carousel__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 50px;
+  margin-top: 24px;
+  padding: 0 24px;
+  border-radius: 3px;
+  background: #DF1F25;
+  color: #FFFFFF;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.brand-carousel__action:hover {
+  transform: translateY(-2px);
+  background: #bd171d;
+}
+
+.brand-carousel__controls {
+  position: absolute;
+  top: 28px;
+  right: max(24px, calc((100% - 1600px) / 2));
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-carousel__arrow {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 50%;
+  background: rgba(13, 11, 16, 0.25);
+  color: #FFFFFF;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 160ms ease;
+}
+
+.brand-carousel__arrow:hover {
+  background: #DF1F25;
+}
+
+.brand-carousel__count {
+  min-width: 48px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+.brand-carousel__tabs {
+  position: absolute;
+  right: max(24px, calc((100% - 1600px) / 2));
+  bottom: 30px;
+  left: max(24px, calc((100% - 1600px) / 2));
+  display: flex;
+  width: min(100% - 3rem, 540px);
+  gap: 18px;
+}
+
+.brand-carousel__tab {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.68);
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.brand-carousel__tab.is-active {
+  color: #FFFFFF;
+}
+
+.brand-carousel__tab-track {
+  display: block;
+  height: 3px;
+  margin-top: 9px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.brand-carousel__tab-track span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--slide-accent);
+}
+
+.brand-carousel__tab.is-active .brand-carousel__tab-track span {
+  width: 100%;
+  transition: width 6.5s linear;
+}
+
+.brand-ticker {
+  overflow: hidden;
+  border-top: 4px dashed #F7C52B;
+  background: #0D0B10;
+}
+
+.brand-ticker__track {
+  display: flex;
+  width: max-content;
+  animation: brand-ticker-scroll 34s linear infinite;
+}
+
+.brand-ticker__group {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 32px;
+  min-height: 48px;
+  padding: 0 20px;
+}
+
+.brand-ticker__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 32px;
+  color: #FFFFFF;
+  font-size: 0.77rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+.brand-ticker__item i {
+  color: #DF1F25;
+  font-size: 0.8rem;
+  font-style: normal;
+}
+
+@keyframes brand-slide-enter {
+  from {
+    opacity: 0.6;
+    transform: scale(1.025);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes brand-ticker-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 .announcement-bar {
   overflow: hidden;
   background: #DF1F25;
@@ -84,7 +326,71 @@ select {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .announcement-track {
+  .announcement-track,
+  .brand-carousel__image,
+  .brand-carousel__tab.is-active .brand-carousel__tab-track span,
+  .brand-ticker__track {
     animation: none;
+    transition: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .brand-carousel__hero,
+  .brand-carousel__content {
+    min-height: 570px;
+  }
+
+  .brand-carousel__hero {
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .brand-carousel__shade {
+    background:
+      linear-gradient(0deg, rgba(13, 11, 16, 0.96) 0%, rgba(13, 11, 16, 0.74) 48%, rgba(13, 11, 16, 0.1) 100%),
+      linear-gradient(90deg, rgba(13, 11, 16, 0.2), transparent);
+  }
+
+  .brand-carousel__content {
+    width: 100%;
+    padding: 220px 24px 126px;
+  }
+
+  .brand-carousel__title {
+    max-width: 440px;
+    font-size: clamp(3rem, 14vw, 5rem);
+  }
+
+  .brand-carousel__description {
+    max-width: 360px;
+    font-size: 0.84rem;
+  }
+
+  .brand-carousel__controls {
+    top: 18px;
+    right: 18px;
+  }
+
+  .brand-carousel__tabs {
+    right: 20px;
+    bottom: 22px;
+    left: 20px;
+    width: auto;
+    gap: 12px;
+  }
+
+  .brand-carousel__tab {
+    font-size: 0.58rem;
+    letter-spacing: 0.04em;
+  }
+
+  .brand-ticker__group,
+  .brand-ticker__item {
+    gap: 22px;
+  }
+
+  .brand-ticker__group {
+    min-height: 42px;
   }
 }
