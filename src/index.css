@@ -499,31 +499,31 @@ select {
 .sale-feature {
   width: 100%;
   overflow: hidden;
-  background: #D12029;
+  background: transparent;
   color: #FFFFFF;
 }
 
 .sale-feature__ticker {
   position: relative;
   display: flex;
-  min-height: 98px;
+  min-height: 126px;
   align-items: flex-end;
   overflow: hidden;
-  padding-top: 54px;
-  background: #0D0B10;
+  padding-top: 82px;
+  background: linear-gradient(to bottom, transparent 0 82px, #0D0B10 82px);
 }
 
-.sale-feature__ticker::before {
+.sale-feature__waves {
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
-  height: 54px;
-  background: repeating-linear-gradient(174deg, #B5B5B5 0 11px, #656565 11px 20px, #161616 20px 29px);
-  content: "";
+  width: 100%;
+  height: 82px;
 }
 
 .sale-feature__ticker-track {
+  position: relative;
   display: flex;
   width: max-content;
   min-height: 44px;
@@ -1196,6 +1196,7 @@ select {
 
 .trending-pair {
   position: relative;
+  isolation: isolate;
   width: 100%;
   min-height: 570px;
   overflow: hidden;
@@ -1205,12 +1206,24 @@ select {
 
 .trending-pair::before {
   position: absolute;
-  z-index: 1;
+  z-index: 0;
   top: -105px;
   left: -15%;
   width: 130%;
   height: 175px;
   border-radius: 0 0 50% 50%;
+  background: #FFFFFF;
+  content: "";
+}
+
+.trending-pair::after {
+  position: absolute;
+  z-index: 0;
+  right: -15%;
+  bottom: -105px;
+  left: -15%;
+  height: 175px;
+  border-radius: 50% 50% 0 0;
   background: #FFFFFF;
   content: "";
 }
@@ -1224,12 +1237,12 @@ select {
   align-items: center;
   gap: 40px;
   margin: 0 auto;
-  padding: 90px 7.8% 52px;
+  padding: 82px 7.8% 78px;
 }
 
 .trending-pair__copy {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   width: 100%;
   max-width: 580px;
 }
@@ -2181,12 +2194,13 @@ select {
   }
 
   .sale-feature__ticker {
-    min-height: 76px;
-    padding-top: 42px;
+    min-height: 84px;
+    padding-top: 50px;
+    background: linear-gradient(to bottom, transparent 0 50px, #0D0B10 50px);
   }
 
-  .sale-feature__ticker::before {
-    height: 42px;
+  .sale-feature__waves {
+    height: 50px;
   }
 
   .sale-feature__ticker-track {
@@ -2410,11 +2424,18 @@ select {
     height: 145px;
   }
 
+  .trending-pair::after {
+    right: -25%;
+    bottom: -88px;
+    left: -25%;
+    height: 145px;
+  }
+
   .trending-pair__inner {
     min-height: 0;
     grid-template-columns: 1fr;
     gap: 34px;
-    padding: 96px 24px 48px;
+    padding: 96px 24px 108px;
   }
 
   .trending-pair__eyebrow {
@@ -2819,4 +2840,23 @@ select {
     width: 52px;
     height: 52px;
   }
+}
+
+.audience-section__title,
+.content-cards-section__title,
+.viral-section__title,
+.best-sellers__title,
+.look-section .best-sellers__title,
+.brand-showcase__title {
+  color: #0D0B10;
+  font-family: 'Tw Cen MT', 'Jost', 'Century Gothic', sans-serif;
+  font-size: clamp(30px, 3.2vw, 48px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+main > section + section:not(.brand-carousel):not(.campaign-section):not(.trending-pair):not(.sale-feature) {
+  margin-top: clamp(12px, 1.1vw, 16px);
 }
