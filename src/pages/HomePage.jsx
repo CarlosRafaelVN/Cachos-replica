@@ -21,7 +21,7 @@ import {
 
 export default function HomePage() {
   return (
-    <div id="top" className="min-h-screen bg-white text-black antialiased">
+    <div id="top" className="home-page min-h-screen bg-white text-black antialiased">
       <SiteHeader />
       <AnnouncementBar />
 
