@@ -11,23 +11,26 @@ export default function ProductGridSection({
   products,
   subtitle,
   columns = 4,
+  variant,
 }) {
   const bestSellersTrack = useRef(null);
   const isBestSellers = title === 'Lo más buscado';
+  const isLook = variant === 'look';
+  const isCarousel = isBestSellers || isLook;
 
-  const headerClass = isBestSellers
+  const headerClass = isCarousel
     ? 'best-sellers__header'
     : 'mb-6 flex items-end justify-between gap-4';
 
   return (
-    <section className={`mx-auto ${isBestSellers ? 'best-sellers-section' : 'max-w-[1600px] px-4 py-8 md:px-6 lg:py-12'}`}>
+    <section className={`mx-auto ${isBestSellers ? 'best-sellers-section' : isLook ? 'look-section' : 'max-w-[1600px] px-4 py-8 md:px-6 lg:py-12'}`}>
       <div className={headerClass}>
         <div>
-          <h2 className={isBestSellers ? 'best-sellers__title' : 'text-[1.8rem] font-black uppercase leading-[1.1] tracking-[-0.07em] text-black md:text-[2.5rem]'}>
+          <h2 className={isCarousel ? 'best-sellers__title' : 'text-[1.8rem] font-black uppercase leading-[1.1] tracking-[-0.07em] text-black md:text-[2.5rem]'}>
             {title}
           </h2>
           {subtitle && (
-            isBestSellers ? (
+            isCarousel ? (
               <p className="best-sellers__subtitle">{subtitle}</p>
             ) : (
               <span className="text-[11px] uppercase tracking-[0.12em] text-black/60">{subtitle}</span>
@@ -36,7 +39,7 @@ export default function ProductGridSection({
         </div>
       </div>
 
-      {isBestSellers ? (
+      {isCarousel ? (
         <div className="best-sellers__carousel">
           <button
             className="best-sellers__arrow best-sellers__arrow--previous"
@@ -84,6 +87,11 @@ export default function ProductGridSection({
             </article>
           ))}
         </div>
+      )}
+      {isLook && (
+        <a className="look-section__all" href="https://www.cachoscr.com/catalog?productType=ACCESORIO">
+          Ver todos los accesorios <span aria-hidden="true">→</span>
+        </a>
       )}
     </section>
   );

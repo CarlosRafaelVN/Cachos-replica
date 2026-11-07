@@ -1,45 +1,73 @@
+const footerNotes = [
+  'Las compras con tarjeta se entregan solo al dueño de la tarjeta.',
+  'Retiro en tienda: indicá la tienda en el mensaje al vendedor (traslados hasta 2 días hábiles).',
+  'Tasa 0 y Credix aplican a 3 meses en compras en línea.',
+  'No hay entregas los fines de semana.',
+];
+
 export default function SiteFooter() {
   return (
-    <footer className="border-t border-black/10 bg-white pt-10 pb-8">
-      <div className="mx-auto grid max-w-[1600px] gap-8 px-4 md:px-6 lg:grid-cols-[1.3fr_0.7fr_0.9fr_1.1fr]">
-        <div>
-          <img src="https://cms.blumewebsites.com/cachos/website/logo.png" alt="Cachos logo" className="mb-4 w-[160px]" />
-          <p className="max-w-[330px] text-[0.8rem] leading-6 text-black/70">Marcas 100% originales de calzado, accesorios y ropa. Más de 30 años caminando con vos.</p>
-          <a href="https://wa.me/50660651818" className="mt-4 inline-block text-[11px] font-black uppercase tracking-[0.12em] text-black">WHATSAPP 6065-1818 →</a>
+    <footer className="site-footer">
+      <div className="site-footer__panel">
+        <div className="site-footer__columns">
+          <div className="site-footer__brand">
+            <img
+              src="https://cms.blumewebsites.com/cachos/website/logo.png"
+              alt="Cachos"
+              className="site-footer__logo"
+            />
+            <p>Marcas 100% originales de calzado, accesorios y ropa. Más de 30 años caminando con vos.</p>
+            <a className="site-footer__whatsapp" href="https://wa.me/50660651818">
+              WHATSAPP 6065-1818 <span aria-hidden="true">→</span>
+            </a>
+          </div>
+
+          <nav className="site-footer__group" aria-label="Ayuda">
+            <h2>AYUDA</h2>
+            <a href="#">Preguntas frecuentes</a>
+            <a href="#">Conocé tu talla ideal</a>
+            <a href="#">Restricciones y reglamentos</a>
+            <a href="#">Restricciones Plusshop</a>
+            <a href="#">Ubicaciones de tiendas</a>
+            <a href="#">Contacto</a>
+          </nav>
+
+          <div className="site-footer__group">
+            <h2>CONTACTO</h2>
+            <a href="tel:+50640003300">Tel. 4000-3300</a>
+            <a href="mailto:servicioalcliente@grupocachos.com">servicioalcliente@grupocachos.com</a>
+            <p>Guachipelín, Escazú, San José. 400 m norte de Construplaza, Blum Business Center, bodega #5.</p>
+          </div>
+
+          <div className="site-footer__group site-footer__payments">
+            <h2>PAGOS</h2>
+            <p><strong>Sinpe Móvil:</strong> 6065-1818</p>
+            <p><strong>BAC</strong> 900205006</p>
+            <small>CR30010200009002050062</small>
+            <p><strong>BCR</strong> 001-0180817-6</p>
+            <small>CR23015201001018081763</small>
+            <p><strong>BNCR</strong> 200-01-091-028159-3</p>
+            <small>CR65015109120010281597</small>
+          </div>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <h2 className="mb-2 text-[10px] font-black uppercase tracking-[0.14em] text-black">AYUDA</h2>
-          <a href="#" className="text-[0.82rem] text-black/70">Preguntas frecuentes</a>
-          <a href="#" className="text-[0.82rem] text-black/70">Conocé tu talla ideal</a>
-          <a href="#" className="text-[0.82rem] text-black/70">Restricciones y reglamentos</a>
-          <a href="#" className="text-[0.82rem] text-black/70">Ubicaciones de tiendas</a>
-          <a href="#" className="text-[0.82rem] text-black/70">Contacto</a>
-        </div>
+        <ul className="site-footer__notes">
+          {footerNotes.map((note) => <li key={note}>{note}</li>)}
+        </ul>
 
-        <div className="flex flex-col gap-2">
-          <h2 className="mb-2 text-[10px] font-black uppercase tracking-[0.14em] text-black">CONTACTO</h2>
-          <a href="tel:+50640003300" className="text-[0.82rem] text-black/70">Tel. 4000-3300</a>
-          <a href="mailto:servicioalcliente@grupocachos.com" className="text-[0.82rem] text-black/70">servicioalcliente@grupocachos.com</a>
-          <span className="text-[0.82rem] text-black/70">Guachipelín, Escazú, San José.</span>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <h2 className="mb-2 text-[10px] font-black uppercase tracking-[0.14em] text-black">PAGOS</h2>
-          <span className="text-[0.82rem] text-black/70">Sinpe Móvil: 6065-1818</span>
-          <span className="text-[0.82rem] text-black/70">BAC 900205006CR30010200009002050062</span>
-          <span className="text-[0.82rem] text-black/70">BCR 001-0180817-6CR23015201001018081763</span>
-          <span className="text-[0.82rem] text-black/70">BNCR 200-01-091-028159-3CR65015109120010281597</span>
-        </div>
+        <p className="site-footer__company">Grupo Cachos S.A. · Céd. jurídica 3-101-138218</p>
       </div>
 
-      <div className="mx-auto mt-8 flex max-w-[1600px] flex-col gap-3 border-t border-black/10 px-4 pt-5 text-[0.8rem] text-black/60 md:flex-row md:items-center md:justify-between md:px-6">
-        <div className="flex flex-wrap gap-3">
+      <div className="site-footer__bottom">
+        <nav className="site-footer__legal" aria-label="Información legal">
           <a href="#">Política de privacidad</a>
           <a href="#">Política de devoluciones</a>
           <a href="#">Términos y condiciones</a>
-        </div>
+        </nav>
         <p>© Blume Apps 2026</p>
+        <a className="site-footer__back-to-top" href="#top" aria-label="Volver arriba">
+          <img src="https://cms.blumewebsites.com/cachos/website/logo.png" alt="" />
+        </a>
       </div>
     </footer>
   );

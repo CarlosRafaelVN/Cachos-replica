@@ -21,7 +21,7 @@ import {
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-white text-black antialiased">
+    <div id="top" className="min-h-screen bg-white text-black antialiased">
       <SiteHeader />
       <AnnouncementBar />
 
@@ -43,7 +43,7 @@ export default function HomePage() {
           title="Completá tu look"
           subtitle="Bolsos, gorras, fajas, vasos y más para acompañar tus pares."
           products={lookProducts}
-          columns={3}
+          variant="look"
         />
         <CommunitySection />
       </main>
