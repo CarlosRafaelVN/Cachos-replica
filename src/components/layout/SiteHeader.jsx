@@ -9,6 +9,16 @@ const utilityLinks = [
   { label: 'Ubicaciones tiendas', href: 'https://www.cachoscr.com/s/store-locations' },
 ];
 
+const navHrefs = {
+  Novedades: '/products',
+  Mujer: '/products?gender=femenino',
+  Hombre: '/products?gender=masculino',
+  Niños: '/products?gender=ninos',
+  Marcas: '/#brands',
+  Nosotros: '/#about',
+  Ofertas: '/products?offers=1',
+};
+
 export default function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-black/10 bg-white">
@@ -53,7 +63,7 @@ export default function SiteHeader() {
       <nav className="flex items-center gap-6 overflow-x-auto border-t border-black/10 px-4 py-3 lg:justify-center lg:gap-10 lg:px-6" aria-label="Navegación principal">
         {navItems.map((item) => (
           <a
-            href="#"
+            href={navHrefs[item] ?? '/products'}
             key={item}
             className="shrink-0 text-[11px] font-bold uppercase tracking-[0.08em] text-black transition hover:opacity-70"
             style={item === 'Ofertas' ? { color: '#DF1F25' } : undefined}

@@ -1,10 +1,11 @@
-export default function CatalogFilters({ brand, setBrand, sort, setSort }) {
-  const brands = ['', 'Converse', 'Vans', 'Dr. Martens', 'Nike', 'Adidas', 'Puma', 'Timberland', 'Columbia', 'Quiksilver', 'Volcom', 'Roxy'];
+export default function CatalogFilters({ brand, setBrand, sort, setSort, size, setSize, gender, setGender, products = [], resetFilters }) {
+  const brands = [...new Set(['', ...products.map((product) => product.marca).filter(Boolean)])];
+  const sizes = [...new Set(products.flatMap((product) => product.tallas ?? []))]
+    .sort((a, b) => Number(a) - Number(b));
 
-
-  const FilterSelect = ({ label, children }) => (
+  const FilterSelect = ({ label, value, onChange, children }) => (
     <label className="catalog-toolbar__field">
-      <select defaultValue="" aria-label={label}>
+      <select value={value} onChange={(event) => onChange(event.target.value)} aria-label={label}>
         <option value="">{label}</option>
         {children}
       </select>
@@ -21,20 +22,20 @@ export default function CatalogFilters({ brand, setBrand, sort, setSort }) {
           <option value="price-high">Precio mayor</option>
         </select>
       </label>
-      <FilterSelect label="Talla">
-        {['34', '35', '36', '37', '38', '39', '40', '41', '42'].map((size) => <option value={size} key={size}>{size}</option>)}
+      <FilterSelect label="Talla" value={size} onChange={setSize}>
+        {sizes.map((item) => <option value={item} key={item}>{item}</option>)}
       </FilterSelect>
-      <FilterSelect label="Género">
-        <option value="femenino">Femenino</option>
-        <option value="masculino">Masculino</option>
-        <option value="unisex">Unisex</option>
+      <FilterSelect label="Género" value={gender} onChange={setGender}>
+        {['FEMENINO', 'MASCULINO', 'UNISEX', 'NIÑOS'].map((item) => (
+          <option value={item.toLowerCase()} key={item}>{item[0] + item.slice(1).toLowerCase()}</option>
+        ))}
       </FilterSelect>
       <label className="catalog-toolbar__field">
         <select value={brand} onChange={(event) => setBrand(event.target.value)} aria-label="Marca">
           {brands.map((name) => <option value={name} key={name || 'all'}>{name || 'Marca'}</option>)}
         </select>
       </label>
-      <button type="button" className="catalog-toolbar__all">
+      <button type="button" className="catalog-toolbar__all" onClick={resetFilters}>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7v5l-4 2v-7L4 5Z" /></svg>
         <span>Todos los filtros</span>
       </button>

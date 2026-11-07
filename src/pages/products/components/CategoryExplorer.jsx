@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const categories = [
+export const catalogCategories = [
   { name: 'Tenis', family: 'TENIS' },
   { name: 'Zapatos y botas', families: ['BOTAS', 'ZAPATOS'] },
   { name: 'Sandalias', families: ['SANDALIA', 'SANDALIAS'] },
@@ -43,7 +43,7 @@ export default function CategoryExplorer({ products = [] }) {
         <a href="/products">Ver todo <b aria-hidden="true">→</b></a>
       </div>
       <div className="catalog-categories__list">
-        {categories.map((category) => (
+        {catalogCategories.map((category) => (
           <a className="catalog-category" href={`/products?category=${encodeURIComponent(category.name)}`} key={category.name}>
             <span className="catalog-category__image">
               <CategoryImage src={categoryImage(category)} name={category.name} />

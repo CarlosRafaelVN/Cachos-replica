@@ -4,7 +4,7 @@ import SiteHeader from '../../components/layout/SiteHeader.jsx';
 import WhatsAppLink from '../../components/layout/WhatsAppLink.jsx';
 import CatalogBreadcrumb from './components/CatalogBreadcrumb.jsx';
 import CatalogFilters from './components/CatalogFilters.jsx';
-import CategoryExplorer from './components/CategoryExplorer.jsx';
+import CategoryExplorer, { catalogCategories } from './components/CategoryExplorer.jsx';
 import CatalogPromotions from './components/CatalogPromotions.jsx';
 import ProductCard from './components/ProductCard.jsx';
 import { obtenerCalzado } from '../../features/catalog/catalogApi.js';
@@ -16,9 +16,14 @@ export default function ProductCatalogPage() {
   const [rawProducts, setRawProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [query, setQuery] = useState(() => new URLSearchParams(window.location.search).get('brand') || '');
+  const catalogParams = new URLSearchParams(window.location.search);
+  const [query, setQuery] = useState(() => catalogParams.get('brand') || '');
+  const [category, setCategory] = useState(() => catalogParams.get('category') || '');
+  const [offersOnly, setOffersOnly] = useState(() => catalogParams.has('offers'));
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('relevance');
+  const [size, setSize] = useState('');
+  const [gender, setGender] = useState(() => catalogParams.get('gender') || (catalogParams.get('category') === 'Niños' ? 'ninos' : ''));
   const [visibleCount, setVisibleCount] = useState(16);
 
   useEffect(() => {
@@ -31,23 +36,43 @@ export default function ProductCatalogPage() {
   const products = useMemo(() => rawProducts.map((product, index) => normalizarProducto(product, index)), [rawProducts]);
   const filteredProducts = useMemo(() => products.filter((product) => {
     const brandMatch = !query || String(product.marca || '').toUpperCase() === query.toUpperCase();
+    const sizeMatch = !size || product.tallas.some((item) => String(item) === String(size));
+    const normalizeGender = (value) => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    const productGender = normalizeGender(typeof product.genero === 'object' ? product.genero?.name ?? '' : product.genero);
+    const genderMatch = !gender || productGender === normalizeGender(gender);
+    const categoryDefinition = catalogCategories.find((item) => item.name === category);
+    const categoryFamilies = categoryDefinition?.families ?? (categoryDefinition?.family ? [categoryDefinition.family] : []);
+    const family = String(product.crudo?.family || '').toUpperCase();
+    const categoryText = `${product.nombre} ${product.descripcion}`.toUpperCase();
+    const categoryMatch = !categoryDefinition || categoryFamilies.some((item) => family.includes(item) || categoryText.includes(item));
+    const offerMatch = !offersOnly || Boolean(product.precioOriginal);
     const text = `${product.nombre} ${product.marca || ''}`.toLowerCase();
-    return brandMatch && (!search || text.includes(search.toLowerCase()));
+    return brandMatch && sizeMatch && genderMatch && categoryMatch && offerMatch && (!search || text.includes(search.toLowerCase()));
   }).sort((a, b) => {
     if (sort === 'name') return a.nombre.localeCompare(b.nombre);
     if (sort === 'price-low') return (a.precio ?? 0) - (b.precio ?? 0);
     if (sort === 'price-high') return (b.precio ?? 0) - (a.precio ?? 0);
     return 0;
-  }), [products, query, search, sort]);
+  }), [products, query, search, sort, size, gender, category, offersOnly]);
 
   useEffect(() => {
     setVisibleCount(16);
-  }, [query, search, sort]);
+  }, [query, search, sort, size, gender, category, offersOnly]);
 
   const chooseBrand = (brand) => {
     setQuery(brand);
     const url = brand ? `/products?brand=${encodeURIComponent(brand)}` : '/products';
     window.history.replaceState({}, '', url);
+  };
+
+  const resetFilters = () => {
+    setQuery('');
+    setSize('');
+    setGender('');
+    setCategory('');
+    setOffersOnly(false);
+    setSort('relevance');
+    window.history.replaceState({}, '', '/products');
   };
 
   return (
@@ -58,7 +83,18 @@ export default function ProductCatalogPage() {
         <CategoryExplorer products={products} />
         <section className="products-page">
           <CatalogBreadcrumb brand={query} />
-          <CatalogFilters brand={query} setBrand={chooseBrand} sort={sort} setSort={setSort} />
+          <CatalogFilters
+            brand={query}
+            setBrand={chooseBrand}
+            sort={sort}
+            setSort={setSort}
+            size={size}
+            setSize={setSize}
+            gender={gender}
+            setGender={setGender}
+            products={products}
+            resetFilters={resetFilters}
+          />
           <div className="products-results" aria-live="polite">
             {loading && <div className="products-state">Cargando productos…</div>}
             {error && <div className="products-state products-state--error">No pudimos cargar el catálogo. {error}</div>}
