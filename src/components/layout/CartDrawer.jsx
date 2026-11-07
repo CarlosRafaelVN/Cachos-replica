@@ -1,19 +1,24 @@
 import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { obtenerRecomendaciones } from '../../features/product/productApi.js';
 import { useCarrito } from '../../features/cart/useCarrito.js';
 import { formatPrice } from '../../utils/formatPrice.js';
 
-function productDetails(item) {
+function getUpsellProduct(item) {
   const product = item.product ?? item;
-  const firstImage = Array.isArray(product.images) ? product.images[0] : null;
+  const image = product.imageUrl
+    ?? product.image
+    ?? (Array.isArray(product.images)
+      ? (typeof product.images[0] === 'string' ? product.images[0] : product.images[0]?.url)
+      : '');
+
   return {
     id: product.externalId ?? product.id ?? product.referenceCode,
     referenceCode: product.referenceCode,
     colorCode: product.colorCode,
     nombre: product.title ?? product.nombre ?? product.name ?? 'Producto',
-    imagen: product.imageUrl ?? product.image ?? (typeof firstImage === 'string' ? firstImage : firstImage?.url) ?? '',
-    precio: Number(product.discountPrice > 0 ? product.discountPrice : product.price ?? product.precio ?? 0),
+    imagen: image ?? '',
+    imagenes: image ? [image] : [],
+    precio: Number(product.discountPrice > 0 ? product.discountPrice : product.price ?? 0),
     talla: product.size ?? null,
   };
 }
@@ -29,8 +34,7 @@ export default function CartDrawer() {
     isCartOpen,
     closeCart,
   } = useCarrito();
-  const [recommendation, setRecommendation] = useState({ referenceCode: '', items: [], loading: false, error: '' });
-  const [discountExpanded, setDiscountExpanded] = useState(false);
+  const [recommendation, setRecommendation] = useState({ referenceCode: '', items: [], error: '' });
   const referenceCode = items.find((item) => item.referenceCode)?.referenceCode ?? '';
 
   useEffect(() => {
@@ -40,12 +44,11 @@ export default function CartDrawer() {
       .then((data) => setRecommendation({
         referenceCode,
         items: Array.isArray(data.items) ? data.items.slice(0, 3) : [],
-        loading: false,
         error: '',
       }))
       .catch((error) => {
         if (error.name !== 'AbortError') {
-          setRecommendation({ referenceCode, items: [], loading: false, error: error.message });
+          setRecommendation({ referenceCode, items: [], error: error.message });
         }
       });
     return () => controller.abort();
@@ -67,15 +70,19 @@ export default function CartDrawer() {
 
   if (!isCartOpen) return null;
 
-  const drawer = (
-    <div className="cart-drawer" onMouseDown={(event) => {
-      if (event.target === event.currentTarget) closeCart();
-    }}>
+  return (
+    <div
+      className="cart-drawer"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) closeCart();
+      }}
+    >
       <aside className="cart-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="cart-drawer-title">
-        <div className="cart-drawer__header">
+        <header className="cart-drawer__header">
           <h2 id="cart-drawer-title">Carrito <span>{cantidadTotal}</span></h2>
           <button type="button" className="cart-drawer__close" aria-label="Cerrar carrito" onClick={closeCart}>×</button>
-        </div>
+        </header>
         <p className="cart-drawer__login">¿Tiene una cuenta? <a href="https://www.cachoscr.com/s/login">Inicie sesión</a> para pagar más rápido.</p>
 
         <div className="cart-drawer__body">
@@ -96,7 +103,7 @@ export default function CartDrawer() {
                       <strong>{item.nombre}</strong>
                       {item.talla && <span>Talla: {item.talla}</span>}
                       <div className="cart-drawer__quantity">
-                        <button type="button" aria-label={`Disminuir cantidad de ${item.nombre}`} disabled={item.cantidad <= 1} onClick={() => cambiarCantidad(item.llave, -1)}>−</button>
+                        <button type="button" aria-label={`Disminuir cantidad de ${item.nombre}`} onClick={() => cambiarCantidad(item.llave, -1)}>−</button>
                         <output aria-label="Cantidad">{item.cantidad}</output>
                         <button type="button" aria-label={`Aumentar cantidad de ${item.nombre}`} onClick={() => cambiarCantidad(item.llave, 1)}>＋</button>
                       </div>
@@ -111,46 +118,40 @@ export default function CartDrawer() {
                 ))}
               </ul>
 
-              <section className="cart-drawer__upsells" aria-label="Productos para sumar al pedido">
-                <h3>Sumale a tu pedido</h3>
-                {isCartOpen && referenceCode && recommendation.referenceCode !== referenceCode && (
-                  <p role="status">Buscando recomendaciones…</p>
-                )}
-                {recommendation.referenceCode === referenceCode && recommendation.loading && (
-                  <p role="status">Buscando recomendaciones…</p>
-                )}
-                {recommendation.referenceCode === referenceCode && recommendation.error && (
-                  <p className="cart-drawer__error">{recommendation.error}</p>
-                )}
-                {recommendation.referenceCode === referenceCode && !recommendation.loading && !recommendation.error && recommendation.items.map((item, index) => {
-                  const product = productDetails(item);
-                  return (
-                    <article className="cart-drawer__upsell" key={`${product.id}-${index}`}>
-                      {product.imagen ? <img src={product.imagen} alt="" loading="lazy" /> : <span className="cart-drawer__image-placeholder" />}
-                      <div><strong>{product.nombre}</strong><b>{formatPrice(product.precio)}</b></div>
-                      <button type="button" onClick={() => agregar(product, product.talla)}>Agregar</button>
-                    </article>
-                  );
-                })}
-              </section>
+              {referenceCode && (
+                <section className="cart-drawer__upsells" aria-label="Productos para sumar al pedido">
+                  <h3>Sumale a tu pedido</h3>
+                  {recommendation.referenceCode !== referenceCode && <p role="status">Buscando recomendaciones…</p>}
+                  {recommendation.referenceCode === referenceCode && recommendation.error && (
+                    <p className="cart-drawer__error">{recommendation.error}</p>
+                  )}
+                  {recommendation.referenceCode === referenceCode && !recommendation.error
+                    && recommendation.items.map((item, index) => {
+                      const product = getUpsellProduct(item);
+                      return (
+                        <article className="cart-drawer__upsell" key={`${product.id}-${index}`}>
+                          {product.imagen
+                            ? <img src={product.imagen} alt="" loading="lazy" />
+                            : <span className="cart-drawer__image-placeholder" />}
+                          <div><strong>{product.nombre}</strong><b>{formatPrice(product.precio)}</b></div>
+                          <button type="button" onClick={() => agregar(product, product.talla)}>Agregar</button>
+                        </article>
+                      );
+                    })}
+                </section>
+              )}
             </>
           )}
         </div>
 
         {items.length > 0 && (
-          <div className="cart-drawer__summary">
-            <button type="button" className="cart-drawer__discount" aria-expanded={discountExpanded} onClick={() => setDiscountExpanded((value) => !value)}>
-              Descuento <span>{discountExpanded ? '−' : '+'}</span>
-            </button>
-            {discountExpanded && <p>Los descuentos disponibles se aplican al finalizar la compra.</p>}
-            <div className="cart-drawer__total"><span>Total estimado</span><strong>{formatPrice(total)}</strong></div>
+          <footer className="cart-drawer__summary">
+            <p><span>Total estimado</span><strong>{formatPrice(total)}</strong></p>
             <small>Aranceles e impuestos aplicables incluidos.</small>
-            <a className="cart-drawer__checkout" href="https://www.cachoscr.com/checkout">Pagar</a>
-          </div>
+            <a href="https://www.cachoscr.com/checkout">Pagar</a>
+          </footer>
         )}
       </aside>
     </div>
   );
-
-  return createPortal(drawer, document.body);
 }

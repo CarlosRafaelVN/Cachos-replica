@@ -387,7 +387,7 @@ export default function ProductPage() {
   const [favorite, setFavorite] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [recentProducts] = useState(readRecentProducts);
-  const { agregar, openCart } = useCarrito();
+  const { agregar } = useCarrito();
 
   useEffect(() => {
     if (missingProductCode) return undefined;
@@ -532,14 +532,11 @@ export default function ProductPage() {
       nombre: item.title,
       imagenes: [imageUrl(item) || images[0]?.url].filter(Boolean),
       precio: item.discountPrice > 0 ? item.discountPrice : item.price,
-      referenceCode,
-      colorCode,
     };
     const count = item === selectedProduct ? quantity : 1;
     for (let index = 0; index < count; index += 1) {
       agregar(cartProduct, item.size ?? null);
     }
-    openCart();
     setFeedback(`${item.title} se agregó${count > 1 ? ` (${count})` : ''} al carrito.`);
   };
 

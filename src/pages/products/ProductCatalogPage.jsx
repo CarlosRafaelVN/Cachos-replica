@@ -20,7 +20,7 @@ export default function ProductCatalogPage() {
   const [query, setQuery] = useState(() => catalogParams.get('brand') || '');
   const [category, setCategory] = useState(() => catalogParams.get('category') || '');
   const [offersOnly, setOffersOnly] = useState(() => catalogParams.has('offers'));
-  const [search] = useState(() => catalogParams.get('search') || '');
+  const [search, setSearch] = useState('');
   const [sort, setSort] = useState('relevance');
   const [size, setSize] = useState('');
   const [gender, setGender] = useState(() => catalogParams.get('gender') || (catalogParams.get('category') === 'Niños' ? 'ninos' : ''));
@@ -33,25 +33,7 @@ export default function ProductCatalogPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const products = useMemo(() => {
-    const grouped = new Map();
-    rawProducts.forEach((product) => {
-      const reference = product.referenceCode ?? product.reference ?? product.sku ?? product.id ?? '';
-      const color = product.colorCode ?? product.color ?? '';
-      const key = `${reference}__${color}`;
-      if (!grouped.has(key)) grouped.set(key, []);
-      grouped.get(key).push(product);
-    });
-
-    return [...grouped.values()].map((variants, index) => {
-      const normalized = normalizarProducto(variants[0], index);
-      const sizes = variants
-        .map((variant) => variant.size ?? variant.talla)
-        .filter((size) => size !== undefined && size !== null && size !== '')
-        .map(String);
-      return { ...normalized, tallas: [...new Set(sizes.length ? sizes : normalized.tallas)] };
-    });
-  }, [rawProducts]);
+  const products = useMemo(() => rawProducts.map((product, index) => normalizarProducto(product, index)), [rawProducts]);
   const filteredProducts = useMemo(() => products.filter((product) => {
     const brandMatch = !query || String(product.marca || '').toUpperCase() === query.toUpperCase();
     const sizeMatch = !size || product.tallas.some((item) => String(item) === String(size));
