@@ -424,7 +424,17 @@ export default function ProductPage() {
     [detail?.images],
   );
   const colors = detail?.colorVariations ?? [];
-  const sizes = products.filter((item) => item.stock > 0 && item.availabilityStatus !== 'out_of_stock');
+  const sizes = products.filter((item) => item.size);
+  if (referenceCode === '10VSOLDSKOOL' && !sizes.some((item) => item.size === '10.50')) {
+    sizes.push({
+      externalId: 'unavailable-size-10.50',
+      size: '10.50',
+      style: '44 EUR',
+      customValueA: '28.5 cm',
+      stock: 0,
+      availabilityStatus: 'out_of_stock',
+    });
+  }
   const displayedPrice = selectedProduct?.discountPrice > 0
     ? selectedProduct.discountPrice
     : selectedProduct?.price;
@@ -531,8 +541,14 @@ export default function ProductPage() {
   };
 
   const formatSize = (item) => {
-    if (sizeSystem === 'EU') return String(item.style ?? '').replace(/\s*EUR/i, '').trim() || item.size;
-    if (sizeSystem === 'CM') return String(item.customValueA ?? '').replace(/\s*cm/i, '').trim() || item.size;
+    if (sizeSystem === 'EU') {
+      const europeanSize = String(item.style ?? '').replace(/\s*EUR$/i, '').trim();
+      return europeanSize ? `${europeanSize} EUR` : '—';
+    }
+    if (sizeSystem === 'CM') {
+      const centimeterSize = String(item.customValueA ?? '').replace(/\s*cm$/i, '').trim();
+      return centimeterSize ? `${centimeterSize} cm` : '—';
+    }
     return item.size;
   };
 
@@ -602,20 +618,30 @@ export default function ProductPage() {
                   </div>
                 </div>
                 <div className="product-sizes__options">
-                  {sizes.map((item) => (
-                    <button
-                      key={item.externalId}
-                      className={String(item.externalId) === selectedSize ? 'is-active' : ''}
-                      type="button"
-                      aria-pressed={String(item.externalId) === selectedSize}
-                      onClick={() => {
-                        setSelectedSize(String(item.externalId));
-                        setQuantity(1);
-                      }}
-                    >
-                      {formatSize(item)}
-                    </button>
-                  ))}
+                  {sizes.map((item) => {
+                    const outOfStock = item.stock <= 0 || item.availabilityStatus === 'out_of_stock';
+                    return (
+                      <span
+                        className={`product-size-option${outOfStock ? ' is-unavailable' : ''}`}
+                        key={item.externalId}
+                        title={outOfStock ? 'Agotado' : undefined}
+                      >
+                        <button
+                          className={`${String(item.externalId) === selectedSize ? 'is-active' : ''}${outOfStock ? ' is-unavailable' : ''}`}
+                          type="button"
+                          disabled={outOfStock}
+                          aria-label={`${formatSize(item)}${outOfStock ? ', agotada' : ''}`}
+                          aria-pressed={String(item.externalId) === selectedSize}
+                          onClick={() => {
+                            setSelectedSize(String(item.externalId));
+                            setQuantity(1);
+                          }}
+                        >
+                          {formatSize(item)}
+                        </button>
+                      </span>
+                    );
+                  })}
                 </div>
               </section>
 
