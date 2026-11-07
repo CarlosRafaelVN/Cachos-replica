@@ -54,8 +54,13 @@ export function normalizarProducto(product, index = 0) {
     product.compareAtPrice ?? product.originalPrice ?? product.regularPrice,
   );
 
+  const referenceCode = product.referenceCode ?? product.reference ?? product.externalReference ?? product.sku ?? null;
+  const colorCode = product.colorCode ?? product.color ?? product.variant?.colorCode ?? null;
+
   return {
     id: String(product.id ?? product._id ?? product.sku ?? product.slug ?? `producto-${index}`),
+    referenceCode: typeof referenceCode === 'object' ? referenceCode?.code ?? null : referenceCode,
+    colorCode: typeof colorCode === 'object' ? colorCode?.code ?? colorCode?.name ?? null : colorCode,
     nombre: product.name ?? product.title ?? product.productName ?? 'Sin nombre',
     descripcion: cleanHtml(product.description ?? product.shortDescription ?? product.details),
     imagenes: [...new Set(images)],

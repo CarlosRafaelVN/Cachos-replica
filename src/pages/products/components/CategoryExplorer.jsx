@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 const categories = [
   { name: 'Tenis', family: 'TENIS' },
   { name: 'Zapatos y botas', families: ['BOTAS', 'ZAPATOS'] },
@@ -9,6 +11,20 @@ const categories = [
   { name: 'Billeteras', families: ['BILLETERA'] },
   { name: 'Ropa', families: ['ROPA', 'ABRIGOS'] },
 ];
+
+function CategoryImage({ src, name }) {
+  const [failed, setFailed] = useState(false);
+
+  if (!src || failed) {
+    return (
+      <svg className="catalog-category__fallback" viewBox="0 0 24 24" role="img" aria-label={`Imagen de ${name} no disponible`}>
+        <path d="M4 19V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Zm4.5-8.5 2.7 2.7 3.8-4.7 4 5.5H5l3.5-3.5Z" />
+      </svg>
+    );
+  }
+
+  return <img src={src} alt="" loading="lazy" onError={() => setFailed(true)} />;
+}
 
 export default function CategoryExplorer({ products = [] }) {
   const categoryImage = (category) => {
@@ -30,7 +46,7 @@ export default function CategoryExplorer({ products = [] }) {
         {categories.map((category) => (
           <a className="catalog-category" href={`/products?category=${encodeURIComponent(category.name)}`} key={category.name}>
             <span className="catalog-category__image">
-              {categoryImage(category) && <img src={categoryImage(category)} alt="" loading="lazy" />}
+              <CategoryImage src={categoryImage(category)} name={category.name} />
             </span>
             <strong>{category.name}</strong>
           </a>
