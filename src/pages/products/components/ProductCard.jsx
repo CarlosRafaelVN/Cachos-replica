@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react';
+import { useCarrito } from '../../../features/cart/useCarrito.js';
+
 const formatPrice = (value) => new Intl.NumberFormat('es-CR', {
   style: 'currency', currency: 'CRC', maximumFractionDigits: 0,
 }).format(value);
@@ -8,32 +11,88 @@ const identifierValue = (value) => {
 };
 
 export default function ProductCard({ product }) {
+  const [sizeModalOpen, setSizeModalOpen] = useState(false);
+  const { agregar, openCart } = useCarrito();
   const raw = product.crudo ?? {};
   const referenceCode = identifierValue(product.referenceCode ?? raw.referenceCode ?? raw.reference);
   const colorCode = identifierValue(product.colorCode ?? raw.colorCode ?? raw.color);
   const detailUrl = referenceCode && colorCode
     ? `/product?${new URLSearchParams({ referenceCode: String(referenceCode), colorCode: String(colorCode) })}`
     : '/product';
+  const sizes = [...new Set((product.tallas ?? []).map(String))].filter(Boolean);
+
+  useEffect(() => {
+    if (!sizeModalOpen) return undefined;
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setSizeModalOpen(false);
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    document.body.classList.add('size-modal-open');
+    return () => {
+      document.removeEventListener('keydown', closeOnEscape);
+      document.body.classList.remove('size-modal-open');
+    };
+  }, [sizeModalOpen]);
+
+  const addWithSize = (size) => {
+    agregar(product, size);
+    setSizeModalOpen(false);
+    openCart();
+  };
+
+  const openSizeModal = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setSizeModalOpen(true);
+  };
 
   return (
-    <article className="products-card">
-      <a className="products-card__media" href={detailUrl} aria-label={`Ver ${product.nombre}`}>
-        {product.imagenes[0]
-          ? <img src={product.imagenes[0]} alt={product.nombre} loading="lazy" />
-          : <span className="products-card__placeholder">{product.nombre}</span>}
-        {product.precioOriginal && <span className="products-card__sale">Oferta</span>}
-        <span className="products-card__quick-view" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2" /></svg>
-        </span>
-      </a>
-      <a className="products-card__body" href={detailUrl} aria-label={`Ver detalles de ${product.nombre}`}>
-        {product.marca && <p className="products-card__brand">{product.marca}</p>}
-        <h2>{product.nombre}</h2>
-        <div className="products-card__prices">
-          {product.precio !== null && <strong>{formatPrice(product.precio)}</strong>}
-          {product.precioOriginal && <del>{formatPrice(product.precioOriginal)}</del>}
+    <>
+      <article className="products-card">
+        <div className="products-card__media-wrap">
+          <a className="products-card__media" href={detailUrl} aria-label={`Ver ${product.nombre}`}>
+            {product.imagenes[0]
+              ? <img src={product.imagenes[0]} alt={product.nombre} loading="lazy" />
+              : <span className="products-card__placeholder">{product.nombre}</span>}
+            {product.precioOriginal && <span className="products-card__sale">Oferta</span>}
+          </a>
+          <button type="button" className="products-card__quick-view" onClick={openSizeModal} aria-label={`Agregar ${product.nombre} al carrito`}>
+            <svg viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2" /></svg>
+          </button>
         </div>
-      </a>
-    </article>
+        <a className="products-card__body" href={detailUrl} aria-label={`Ver detalles de ${product.nombre}`}>
+          {product.marca && <p className="products-card__brand">{product.marca}</p>}
+          <h2>{product.nombre}</h2>
+          <div className="products-card__prices">
+            {product.precio !== null && <strong>{formatPrice(product.precio)}</strong>}
+            {product.precioOriginal && <del>{formatPrice(product.precioOriginal)}</del>}
+          </div>
+        </a>
+      </article>
+
+      {sizeModalOpen && (
+        <div className="product-size-modal" role="presentation" onMouseDown={(event) => {
+          if (event.target === event.currentTarget) setSizeModalOpen(false);
+        }}>
+          <section className="product-size-modal__panel" role="dialog" aria-modal="true" aria-labelledby="size-modal-title">
+            <button type="button" className="product-size-modal__close" onClick={() => setSizeModalOpen(false)} aria-label="Cerrar">×</button>
+            <div className="product-size-modal__product">
+              {product.imagenes[0] && <img src={product.imagenes[0]} alt="" />}
+              <h3 id="size-modal-title">{product.nombre}</h3>
+            </div>
+            <p className="product-size-modal__label">Elija su talla</p>
+            {sizes.length ? (
+              <div className="product-size-modal__sizes">
+                {sizes.map((size) => (
+                  <button type="button" key={size} onClick={() => addWithSize(size)}>{size}</button>
+                ))}
+              </div>
+            ) : (
+              <p className="product-size-modal__empty">Este producto no tiene tallas disponibles.</p>
+            )}
+          </section>
+        </div>
+      )}
+    </>
   );
 }

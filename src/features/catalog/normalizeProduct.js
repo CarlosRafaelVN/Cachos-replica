@@ -39,6 +39,8 @@ export function normalizarProducto(product, index = 0) {
   const variants = Array.isArray(product.variants) ? product.variants : [];
   const sizes = [
     ...(Array.isArray(product.sizes) ? product.sizes : []),
+    product.size,
+    product.talla,
     ...variants.map((variant) => variant.size ?? variant.talla ?? variant.name),
   ]
     .map((size) => (typeof size === 'object' ? size?.name ?? size?.label : size))
