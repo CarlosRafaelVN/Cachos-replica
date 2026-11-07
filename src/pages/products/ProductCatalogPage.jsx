@@ -20,7 +20,7 @@ export default function ProductCatalogPage() {
   const [query, setQuery] = useState(() => catalogParams.get('brand') || '');
   const [category, setCategory] = useState(() => catalogParams.get('category') || '');
   const [offersOnly, setOffersOnly] = useState(() => catalogParams.has('offers'));
-  const [search, setSearch] = useState('');
+  const [search] = useState(() => catalogParams.get('search') || '');
   const [sort, setSort] = useState('relevance');
   const [size, setSize] = useState('');
   const [gender, setGender] = useState(() => catalogParams.get('gender') || (catalogParams.get('category') === 'Niños' ? 'ninos' : ''));

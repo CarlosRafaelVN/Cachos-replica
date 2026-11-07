@@ -14,6 +14,7 @@ export const catalogCategories = [
 
 function CategoryImage({ src, name }) {
   const [failed, setFailed] = useState(false);
+  const [processedSrc, setProcessedSrc] = useState('');
 
   if (!src || failed) {
     return (
@@ -23,7 +24,96 @@ function CategoryImage({ src, name }) {
     );
   }
 
-  return <img src={src} alt="" loading="lazy" onError={() => setFailed(true)} />;
+  const removeImageBackground = (event) => {
+    const image = event.currentTarget;
+    if (processedSrc || image.naturalWidth === 0) return;
+
+    const canvas = document.createElement('canvas');
+    const scale = Math.min(1, 480 / image.naturalWidth);
+    canvas.width = Math.round(image.naturalWidth * scale);
+    canvas.height = Math.round(image.naturalHeight * scale);
+    const context = canvas.getContext('2d', { willReadFrequently: true });
+    if (!context) {
+      console.error(`No se pudo preparar la imagen de la categoría ${name}.`);
+      return;
+    }
+
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    const { data } = imageData;
+    const width = canvas.width;
+    const height = canvas.height;
+    const cornerIndices = [0, width - 1, (height - 1) * width, height * width - 1];
+    const backgroundColors = cornerIndices
+      .map((index) => {
+        const offset = index * 4;
+        return data[offset + 3] > 10
+          ? [data[offset], data[offset + 1], data[offset + 2]]
+          : null;
+      })
+      .filter(Boolean);
+
+    if (!backgroundColors.length) return;
+
+    const visited = new Uint8Array(width * height);
+    const queue = new Uint32Array(width * height);
+    let head = 0;
+    let tail = 0;
+    let removedPixels = 0;
+    cornerIndices.forEach((index) => {
+      if (data[index * 4 + 3] > 10 && !visited[index]) {
+        visited[index] = 1;
+        queue[tail] = index;
+        tail += 1;
+      }
+    });
+
+    while (head < tail) {
+      const index = queue[head];
+      head += 1;
+      const offset = index * 4;
+      const matchesBackground = backgroundColors.some(([red, green, blue]) => {
+        const redDiff = data[offset] - red;
+        const greenDiff = data[offset + 1] - green;
+        const blueDiff = data[offset + 2] - blue;
+        return redDiff * redDiff + greenDiff * greenDiff + blueDiff * blueDiff <= 48 * 48;
+      });
+
+      if (!matchesBackground) continue;
+      data[offset + 3] = 0;
+      removedPixels += 1;
+
+      const neighbors = [
+        index % width > 0 ? index - 1 : -1,
+        index % width < width - 1 ? index + 1 : -1,
+        index >= width ? index - width : -1,
+        index < width * (height - 1) ? index + width : -1,
+      ];
+      neighbors.forEach((neighbor) => {
+        if (neighbor >= 0 && !visited[neighbor]) {
+          visited[neighbor] = 1;
+          queue[tail] = neighbor;
+          tail += 1;
+        }
+      });
+    }
+
+    if (removedPixels) {
+      context.putImageData(imageData, 0, 0);
+      setProcessedSrc(canvas.toDataURL('image/png'));
+    }
+  };
+
+  return (
+    <img
+      src={processedSrc || src}
+      alt=""
+      loading="lazy"
+      crossOrigin="anonymous"
+      onLoad={removeImageBackground}
+      onError={() => setFailed(true)}
+    />
+  );
 }
 
 export default function CategoryExplorer({ products = [] }) {

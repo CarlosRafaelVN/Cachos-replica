@@ -1,9 +1,11 @@
 import HomePage from '../pages/HomePage.jsx';
 import ProductPage from '../pages/ProductPage.jsx';
 import ProductCatalogPage from '../pages/products/ProductCatalogPage.jsx';
+import { CartProvider } from '../features/cart/useCarrito.js';
 
 export default function App() {
-  if (window.location.pathname === '/product') return <ProductPage />;
-  if (window.location.pathname === '/products') return <ProductCatalogPage />;
-  return <HomePage />;
+  let page = <HomePage />;
+  if (window.location.pathname === '/product') page = <ProductPage />;
+  if (window.location.pathname === '/products') page = <ProductCatalogPage />;
+  return <CartProvider>{page}</CartProvider>;
 }
