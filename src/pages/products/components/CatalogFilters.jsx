@@ -1,6 +1,7 @@
 export default function CatalogFilters({ brand, setBrand, sort, setSort }) {
   const brands = ['', 'Converse', 'Vans', 'Dr. Martens', 'Nike', 'Adidas', 'Puma', 'Timberland', 'Columbia', 'Quiksilver', 'Volcom', 'Roxy'];
 
+
   const FilterSelect = ({ label, children }) => (
     <label className="catalog-toolbar__field">
       <select defaultValue="" aria-label={label}>

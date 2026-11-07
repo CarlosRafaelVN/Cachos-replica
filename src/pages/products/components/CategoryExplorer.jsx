@@ -1,13 +1,13 @@
 const categories = [
   { name: 'Tenis', family: 'TENIS' },
-  { name: 'Zapatos y botas', family: 'BOTAS' },
-  { name: 'Sandalias', family: 'SANDALIA' },
-  { name: 'Mochilas y bolsos', family: 'MOCHILA' },
-  { name: 'Gorras', family: 'GORRA' },
-  { name: 'Medias', family: 'MEDIA' },
-  { name: 'Vasos y botellas', family: 'VASO' },
-  { name: 'Billeteras', family: 'BILLETERA' },
-  { name: 'Ropa', family: 'ROPA' },
+  { name: 'Zapatos y botas', families: ['BOTAS', 'ZAPATOS'] },
+  { name: 'Sandalias', families: ['SANDALIA', 'SANDALIAS'] },
+  { name: 'Mochilas y bolsos', families: ['MOCHILA', 'MALETIN', 'BOLSO'] },
+  { name: 'Gorras', families: ['GORRA', 'HEADWEAR'] },
+  { name: 'Medias', families: ['MEDIA', 'MEDIAS'] },
+  { name: 'Vasos y botellas', families: ['VASO', 'BOTELLA', 'TAZA', 'PORTALATA'] },
+  { name: 'Billeteras', families: ['BILLETERA'] },
+  { name: 'Ropa', families: ['ROPA', 'ABRIGOS'] },
 ];
 
 export default function CategoryExplorer({ products = [] }) {
@@ -15,8 +15,8 @@ export default function CategoryExplorer({ products = [] }) {
     const match = products.find((product) => {
       const family = String(product.crudo?.family || '').toUpperCase();
       const text = `${product.nombre} ${product.descripcion}`.toUpperCase();
-      if (category.family) return family.includes(category.family) || text.includes(category.family);
-      return false;
+      const families = category.families ?? (category.family ? [category.family] : []);
+      return families.some((name) => family.includes(name) || text.includes(name));
     });
     return match?.imagenes?.[0];
   };

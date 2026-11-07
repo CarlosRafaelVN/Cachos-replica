@@ -19,6 +19,7 @@ export default function ProductCatalogPage() {
   const [query, setQuery] = useState(() => new URLSearchParams(window.location.search).get('brand') || '');
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('relevance');
+  const [visibleCount, setVisibleCount] = useState(16);
 
   useEffect(() => {
     obtenerCalzado()
@@ -38,6 +39,10 @@ export default function ProductCatalogPage() {
     if (sort === 'price-high') return (b.precio ?? 0) - (a.precio ?? 0);
     return 0;
   }), [products, query, search, sort]);
+
+  useEffect(() => {
+    setVisibleCount(16);
+  }, [query, search, sort]);
 
   const chooseBrand = (brand) => {
     setQuery(brand);
@@ -59,8 +64,23 @@ export default function ProductCatalogPage() {
             {error && <div className="products-state products-state--error">No pudimos cargar el catálogo. {error}</div>}
             {!loading && !error && filteredProducts.length === 0 && <div className="products-state">No encontramos productos con estos filtros.</div>}
             <div className="products-grid">
-              {filteredProducts.map((product) => <ProductCard key={product.id} product={product} />)}
+              {filteredProducts.slice(0, visibleCount).map((product) => <ProductCard key={product.id} product={product} />)}
             </div>
+            {!loading && !error && filteredProducts.length > 0 && (
+              <div className="catalog-pagination">
+                <p className="catalog-pagination__count" aria-live="polite">
+                  Mostrando {Math.min(visibleCount, filteredProducts.length)} de {filteredProducts.length}
+                </p>
+                <div className="catalog-pagination__progress" role="progressbar" aria-label="Productos mostrados" aria-valuemin="0" aria-valuemax={filteredProducts.length} aria-valuenow={Math.min(visibleCount, filteredProducts.length)}>
+                  <span style={{ width: `${Math.min(100, (Math.min(visibleCount, filteredProducts.length) / filteredProducts.length) * 100)}%` }} />
+                </div>
+                {visibleCount < filteredProducts.length && (
+                  <button type="button" className="catalog-pagination__more" onClick={() => setVisibleCount((current) => current + 16)}>
+                    Mostrar más <span aria-hidden="true" />
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </section>
       </main>
