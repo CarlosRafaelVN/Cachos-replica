@@ -25,14 +25,28 @@ export default function ProductCatalogPage() {
       <div className="grilla">
         {products.map((rawProduct, index) => {
           const product = normalizarProducto(rawProduct, index);
+          const href = product.referenceCode && product.colorCode
+            ? `/product?${new URLSearchParams({
+              referenceCode: String(product.referenceCode),
+              colorCode: String(product.colorCode),
+            })}`
+            : null;
           return (
             <article className="tarjeta" key={product.id}>
-              {product.imagenes[0] && (
-                <img src={product.imagenes[0]} alt={product.nombre} loading="lazy" />
-              )}
-              <h2>{product.nombre}</h2>
-              {product.precio !== null && <p className="precio">{formatearPrecio(product.precio)}</p>}
-              <p className="descripcion">{product.descripcion || 'Sin descripción'}</p>
+              <div className="tarjeta__media">
+                {product.imagenes[0] && (
+                  <img src={product.imagenes[0]} alt={product.nombre} loading="lazy" />
+                )}
+              </div>
+              <div className="tarjeta__body">
+                {product.marca && <p className="tarjeta__brand">{product.marca}</p>}
+                <h2>{product.nombre}</h2>
+                <p className="descripcion">{product.descripcion || 'Sin descripción'}</p>
+              </div>
+              <div className="tarjeta__footer">
+                {product.precio !== null && <p className="precio">{formatearPrecio(product.precio)}</p>}
+                {href && <a className="tarjeta__action" href={href}>Ver producto</a>}
+              </div>
             </article>
           );
         })}

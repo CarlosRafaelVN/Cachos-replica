@@ -55,10 +55,19 @@ export default function ProductGridSection({
                 <a className="best-sellers__image-link" href={product.href ?? '#'} aria-label={product.name}>
                   <img src={product.image} alt={product.name} loading="lazy" />
                 </a>
+                {product.brand && <p className="best-sellers__brand">{product.brand}</p>}
                 <a className="best-sellers__name" href={product.href ?? '#'}>{product.name}</a>
-                <div className="best-sellers__prices">
-                  <span>{formatPrice(product.price)}</span>
-                  {product.oldPrice && <del>{formatPrice(product.oldPrice)}</del>}
+                <div className="best-sellers__footer">
+                  <div className="best-sellers__prices">
+                    <span>{formatPrice(product.price)}</span>
+                    {product.oldPrice && <del>{formatPrice(product.oldPrice)}</del>}
+                  </div>
+                  <a className="best-sellers__action" href={product.href ?? '#'} aria-label={`Ver ${product.name}`}>
+                    Ver producto
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2" />
+                    </svg>
+                  </a>
                 </div>
               </article>
             ))}
@@ -75,14 +84,23 @@ export default function ProductGridSection({
       ) : (
         <div className={`grid gap-5 md:grid-cols-2 ${columnClasses[columns] ?? columnClasses[4]}`}>
           {products.map((product) => (
-            <article key={product.name} className="overflow-hidden rounded-[18px] border border-black/10 bg-white transition hover:-translate-y-1">
-              <img src={product.image} alt={product.name} loading="lazy" className="h-[260px] w-full object-cover" />
-              <h3 className="px-4 pt-4 text-[0.88rem] font-bold uppercase leading-[1.35] tracking-[0.03em] text-black">
-                {product.name}
-              </h3>
-              <div className="flex items-center gap-3 px-4 pb-4 pt-3 text-sm font-extrabold">
-                <strong className="text-black">{formatPrice(product.price)}</strong>
-                {product.oldPrice && <span className="text-black/40 line-through">{formatPrice(product.oldPrice)}</span>}
+            <article key={product.name} className="best-sellers__card best-sellers__card--grid">
+              <a className="best-sellers__image-link" href={product.href ?? '#'} aria-label={product.name}>
+                <img src={product.image} alt={product.name} loading="lazy" />
+              </a>
+              {product.brand && <p className="best-sellers__brand">{product.brand}</p>}
+              <a className="best-sellers__name" href={product.href ?? '#'}>{product.name}</a>
+              <div className="best-sellers__footer">
+                <div className="best-sellers__prices">
+                  <strong>{formatPrice(product.price)}</strong>
+                  {product.oldPrice && <del>{formatPrice(product.oldPrice)}</del>}
+                </div>
+                <a className="best-sellers__action" href={product.href ?? '#'} aria-label={`Ver ${product.name}`}>
+                  Ver producto
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2" />
+                  </svg>
+                </a>
               </div>
             </article>
           ))}
