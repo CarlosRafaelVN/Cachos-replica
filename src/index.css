@@ -303,7 +303,7 @@ select {
 
 .viral-carousel {
   position: relative;
-  width: min(100% - 32px, 1120px);
+  width: min(100% - 32px, 1350px);
   margin: 0 auto;
 }
 
@@ -311,16 +311,16 @@ select {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(36px, 6.25vw, 75px);
+  gap: clamp(36px, 6.1vw, 94px);
 }
 
 .viral-carousel__slide {
   min-width: 0;
-  flex: 0 0 min(24.5vw, 294px);
+  flex: 0 0 min(24vw, 368px);
 }
 
 .viral-carousel__slide.is-active {
-  flex-basis: min(28.25vw, 339px);
+  flex-basis: min(27.5vw, 423px);
 }
 
 .viral-carousel__media {
@@ -332,9 +332,88 @@ select {
 }
 
 .viral-carousel__media video {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.viral-carousel__product {
+  display: grid;
+  grid-template-columns: 60px minmax(0, 1fr) 50px;
+  align-items: center;
+  gap: 12px;
+  min-height: 116px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid #E3E3E3;
+  border-radius: 11px;
+  background: #FFFFFF;
+}
+
+.viral-carousel__thumb {
+  display: grid;
+  width: 60px;
+  height: 64px;
+  place-items: center;
+  background: #FAFAFA;
+}
+
+.viral-carousel__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.viral-carousel__details {
+  min-width: 0;
+}
+
+.viral-carousel__product-link {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viral-carousel__name,
+.viral-carousel__price {
+  color: #111111;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.viral-carousel__name {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.viral-carousel__details .viral-carousel__more {
+  justify-content: flex-start;
+  margin-top: 2px;
+  font-size: 13px;
+}
+
+.viral-carousel__add {
+  display: grid;
+  width: 50px;
+  height: 50px;
+  place-items: center;
+  border-radius: 50%;
+  background: #111111;
+  color: #FFFFFF;
+}
+
+.viral-carousel__add svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
 }
 
 .viral-carousel__select {
@@ -1875,6 +1954,18 @@ select {
 
   .viral-carousel__arrow--next {
     right: 0;
+  }
+
+  .viral-carousel__slides {
+    gap: clamp(16px, 4vw, 36px);
+  }
+
+  .viral-carousel__slide {
+    flex-basis: min(24vw, 294px);
+  }
+
+  .viral-carousel__slide.is-active {
+    flex-basis: min(28vw, 339px);
   }
 
   .sale-feature__main {
