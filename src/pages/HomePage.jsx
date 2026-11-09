@@ -7,7 +7,7 @@ import BrandCarouselSection from '../components/home/BrandCarouselSection.jsx';
 import PairCardsSection from '../components/home/PairCardsSection.jsx';
 import ProductGridSection from '../components/home/ProductGridSection.jsx';
 import SaleFeatureSection from '../components/home/SaleFeatureSection.jsx';
-//import ViralCarouselSection from '../components/home/ViralCarouselSection.jsx';
+import ViralCarouselSection from '../components/home/ViralCarouselSection.jsx';
 import AnnouncementBar from '../components/layout/AnnouncementBar.jsx';
 import SiteFooter from '../components/layout/SiteFooter.jsx';
 import SiteHeader from '../components/layout/SiteHeader.jsx';
@@ -36,7 +36,7 @@ export default function HomePage() {
         <BrandSection />
         <PairCardsSection />
         <AudienceSection />
-       //ViralCarouselSection /
+        <ViralCarouselSection products={viralProducts} />
         <SaleFeatureSection />
         <ContentCardsSection title="Más que calzado" items={moreThanShoes} />
         <ProductGridSection
