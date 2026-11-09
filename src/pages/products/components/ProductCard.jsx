@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useCarrito } from '../../../features/cart/useCarrito.js';
 import { obtenerDetalleProducto } from '../../../features/product/productApi.js';
 import { formatProductSize, SIZE_SYSTEMS } from '../../../features/product/productSizes.js';
+import '../../../features/catalog/product-card.css';
 
 const formatPrice = (value) => new Intl.NumberFormat('es-CR', {
   style: 'currency', currency: 'CRC', maximumFractionDigits: 0,
@@ -12,7 +13,7 @@ const identifierValue = (value) => {
   return value?.code ?? value?.value ?? value?.name ?? null;
 };
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, className = '' }) {
   const [sizeModalOpen, setSizeModalOpen] = useState(false);
   const [availableSizes, setAvailableSizes] = useState([]);
   const [sizeSystem, setSizeSystem] = useState('US');
@@ -93,7 +94,7 @@ export default function ProductCard({ product }) {
 
   return (
     <>
-      <article className="products-card">
+      <article className={`products-card ${className}`.trim()}>
         <div className="products-card__media-wrap">
           <a className="products-card__media" href={detailUrl} aria-label={`Ver ${product.nombre}`}>
             {product.imagenes[0]

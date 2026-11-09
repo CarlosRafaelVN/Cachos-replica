@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { formatPrice } from '../../utils/formatPrice.js';
+import ProductCard from '../../pages/products/components/ProductCard.jsx';
+import { normalizeHomeProduct } from '../../features/catalog/normalizeHomeProduct.js';
 
 export default function ViralCarouselSection({ products }) {
   const [activeIndex, setActiveIndex] = useState(3);
@@ -31,65 +32,14 @@ export default function ViralCarouselSection({ products }) {
                 key={product.name}
                 aria-label={product.name}
               >
-                <div className="viral-carousel__media">
-                  <video
-                    autoPlay
-                    loop
-                    muted={soundEnabledId !== product.name}
-                    playsInline
-                    preload="metadata"
-                    poster={product.image}
-                    src={product.video}
-                    aria-label={`Video de ${product.name}`}
-                  />
-                  {isActive ? (
-                    <button
-                      className="viral-carousel__sound"
-                      type="button"
-                      aria-label={soundEnabledId === product.name ? 'Silenciar video' : 'Activar sonido'}
-                      onClick={() => setSoundEnabledId((current) => (
-                        current === product.name ? null : product.name
-                      ))}
-                    >
-                      {soundEnabledId === product.name ? (
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                          <path d="M11 5 6 9H3v6h3l5 4V5Zm4 4 5 6m0-6-5 6" />
-                        </svg>
-                      ) : (
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                          <path d="M11 5 6 9H3v6h3l5 4V5Zm4 4a5 5 0 0 1 0 6m3-9a9 9 0 0 1 0 12" />
-                        </svg>
-                      )}
-                    </button>
-                  ) : (
-                    <button
-                      className="viral-carousel__select"
-                      type="button"
-                      aria-label={`Ver ${product.name}`}
-                      onClick={() => setActiveIndex(index)}
-                    />
-                  )}
-                </div>
 
-                <div className="viral-carousel__product">
-                  <div className="viral-carousel__details">
-                    {product.brand && <p className="viral-carousel__brand">{product.brand}</p>}
-                    <a className="viral-carousel__product-link" href={product.href}>
-                      <span className="viral-carousel__name">{product.name}</span>
-                      <span className="viral-carousel__price">{formatPrice(product.price)}</span>
-                    </a>
-                    <a className="viral-carousel__more" href={product.catalogHref}>
-                      <span aria-hidden="true">⌃</span>
-                      Ver todos ({product.count})
-                    </a>
-                  </div>
-                  <a className="viral-carousel__add" href={product.href} aria-label={`Ver ${product.name}`}>
-                    Ver producto
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2" />
-                    </svg>
-                  </a>
-                </div>
+                <ProductCard
+                  className="viral-carousel__product-card"
+                  product={normalizeHomeProduct(product)}
+                />
+                <a className="viral-carousel__more" href={product.catalogHref}>
+                  Ver todos ({product.count})
+                </a>
               </article>
             );
           })}

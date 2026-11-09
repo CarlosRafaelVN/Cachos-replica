@@ -1,5 +1,6 @@
 import { useRef } from 'react';
-import { formatPrice } from '../../utils/formatPrice.js';
+import ProductCard from '../../pages/products/components/ProductCard.jsx';
+import { normalizeHomeProduct } from '../../features/catalog/normalizeHomeProduct.js';
 
 const columnClasses = {
   3: 'xl:grid-cols-3',
@@ -51,25 +52,11 @@ export default function ProductGridSection({
           </button>
           <div className="best-sellers__track" ref={bestSellersTrack}>
             {products.map((product) => (
-              <article className="best-sellers__card" key={product.name}>
-                <a className="best-sellers__image-link" href={product.href ?? '#'} aria-label={product.name}>
-                  <img src={product.image} alt={product.name} loading="lazy" />
-                </a>
-                {product.brand && <p className="best-sellers__brand">{product.brand}</p>}
-                <a className="best-sellers__name" href={product.href ?? '#'}>{product.name}</a>
-                <div className="best-sellers__footer">
-                  <div className="best-sellers__prices">
-                    <span>{formatPrice(product.price)}</span>
-                    {product.oldPrice && <del>{formatPrice(product.oldPrice)}</del>}
-                  </div>
-                  <a className="best-sellers__action" href={product.href ?? '#'} aria-label={`Ver ${product.name}`}>
-                    Ver producto
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2" />
-                    </svg>
-                  </a>
-                </div>
-              </article>
+              <ProductCard
+                key={product.name}
+                className="home-product-card"
+                product={normalizeHomeProduct(product)}
+              />
             ))}
           </div>
           <button
@@ -84,25 +71,7 @@ export default function ProductGridSection({
       ) : (
         <div className={`grid gap-5 md:grid-cols-2 ${columnClasses[columns] ?? columnClasses[4]}`}>
           {products.map((product) => (
-            <article key={product.name} className="best-sellers__card best-sellers__card--grid">
-              <a className="best-sellers__image-link" href={product.href ?? '#'} aria-label={product.name}>
-                <img src={product.image} alt={product.name} loading="lazy" />
-              </a>
-              {product.brand && <p className="best-sellers__brand">{product.brand}</p>}
-              <a className="best-sellers__name" href={product.href ?? '#'}>{product.name}</a>
-              <div className="best-sellers__footer">
-                <div className="best-sellers__prices">
-                  <strong>{formatPrice(product.price)}</strong>
-                  {product.oldPrice && <del>{formatPrice(product.oldPrice)}</del>}
-                </div>
-                <a className="best-sellers__action" href={product.href ?? '#'} aria-label={`Ver ${product.name}`}>
-                  Ver producto
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2" />
-                  </svg>
-                </a>
-              </div>
-            </article>
+            <ProductCard key={product.name} product={normalizeHomeProduct(product)} />
           ))}
         </div>
       )}
