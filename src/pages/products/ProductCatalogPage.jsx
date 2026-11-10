@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import SiteFooter from '../../components/layout/SiteFooter.jsx';
 import SiteHeader from '../../components/layout/SiteHeader.jsx';
 import WhatsAppLink from '../../components/layout/WhatsAppLink.jsx';
@@ -8,15 +8,12 @@ import CategoryExplorer, { catalogCategories } from './components/CategoryExplor
 import CatalogPagination from '../../features/catalog/components/CatalogPagination.jsx';
 import CatalogPromotions from './components/CatalogPromotions.jsx';
 import ProductCard from './components/ProductCard.jsx';
-import { obtenerCalzado } from '../../features/catalog/catalogApi.js';
-import { extraerProductos, normalizarProducto } from '../../features/catalog/normalizeProduct.js';
+import { normalizarProducto } from '../../features/catalog/normalizeProduct.js';
+import { staticCatalogProducts } from '../../features/catalog/staticCatalogProducts.js';
 import '../../features/catalog/catalog.css';
 
 
 export default function ProductCatalogPage() {
-  const [rawProducts, setRawProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const catalogParams = new URLSearchParams(window.location.search);
   const [query, setQuery] = useState(() => catalogParams.get('brand') || '');
   const [category, setCategory] = useState(() => catalogParams.get('category') || '');
@@ -28,20 +25,19 @@ export default function ProductCatalogPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 16;
 
-  useEffect(() => {
-    obtenerCalzado()
-      .then((data) => setRawProducts(extraerProductos(data)))
-      .catch((requestError) => setError(requestError.message))
-      .finally(() => setLoading(false));
-  }, []);
-
-  const products = useMemo(() => rawProducts.map((product, index) => normalizarProducto(product, index)), [rawProducts]);
+  const products = useMemo(
+    () => staticCatalogProducts.map((product, index) => normalizarProducto(product, index)),
+    [],
+  );
   const filteredProducts = useMemo(() => products.filter((product) => {
     const brandMatch = !query || String(product.marca || '').toUpperCase() === query.toUpperCase();
     const sizeMatch = !size || product.tallas.some((item) => String(item) === String(size));
     const normalizeGender = (value) => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
     const productGender = normalizeGender(typeof product.genero === 'object' ? product.genero?.name ?? '' : product.genero);
-    const genderMatch = !gender || productGender === normalizeGender(gender);
+    const selectedGender = normalizeGender(gender);
+    const genderMatch = !selectedGender
+      || productGender === selectedGender
+      || (productGender === 'UNISEX' && ['FEMENINO', 'MASCULINO'].includes(selectedGender));
     const categoryDefinition = catalogCategories.find((item) => item.name === category);
     const categoryFamilies = categoryDefinition?.families ?? (categoryDefinition?.family ? [categoryDefinition.family] : []);
     const family = String(product.crudo?.family || '').toUpperCase();
@@ -118,13 +114,14 @@ export default function ProductCatalogPage() {
             resetFilters={resetFilters}
           />
           <div className="products-results" aria-live="polite">
-            {loading && <div className="products-state">Cargando productos…</div>}
-            {error && <div className="products-state products-state--error">No pudimos cargar el catálogo. {error}</div>}
-            {!loading && !error && filteredProducts.length === 0 && <div className="products-state">No encontramos productos con estos filtros.</div>}
-            <div className="products-grid">
-              {pageProducts.map((product) => <ProductCard key={product.id} product={product} />)}
+            <div className="products-state" role="status">
+              Catálogo de prueba con datos estáticos. Precios, tallas y disponibilidad son ilustrativos; las compras están deshabilitadas.
             </div>
-            {!loading && !error && filteredProducts.length > 0 && (
+            {filteredProducts.length === 0 && <div className="products-state">No encontramos productos con estos filtros.</div>}
+            <div className="products-grid">
+              {pageProducts.map((product) => <ProductCard key={product.id} product={product} staticOnly />)}
+            </div>
+            {filteredProducts.length > 0 && (
               <CatalogPagination
                 currentPage={displayedPage}
                 pageSize={pageSize}

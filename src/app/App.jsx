@@ -6,7 +6,9 @@ import { CartProvider } from '../features/cart/useCarrito.js';
 
 export default function App() {
   let page = <HomePage />;
-  if (window.location.pathname === '/product') page = <ProductPage />;
+  if (window.location.pathname === '/product') {
+    page = <ProductPage />;
+  }
   if (window.location.pathname === '/products') page = <ProductCatalogPage />;
 
   return (
