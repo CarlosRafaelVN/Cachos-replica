@@ -9,6 +9,7 @@ import {
   obtenerRecomendaciones,
 } from '../features/product/productApi.js';
 import { formatProductSize, SIZE_SYSTEMS } from '../features/product/productSizes.js';
+import { createStaticProductDetail, staticCatalogProducts } from '../features/catalog/staticCatalogProducts.js';
 import { formatPrice } from '../utils/formatPrice.js';
 
 const RECENT_PRODUCTS_KEY = 'cachos-recent-products';
@@ -186,9 +187,11 @@ function RelatedProducts({ items, loading, error }) {
             const product = item.product ?? item;
             const reference = product.referenceCode;
             const color = product.colorCode;
-            const href = reference && color
-              ? `/product?${new URLSearchParams({ referenceCode: reference, colorCode: color })}`
-              : '';
+            const href = product.staticOnly
+              ? `/product?staticProduct=${encodeURIComponent(reference)}`
+              : reference && color
+                ? `/product?${new URLSearchParams({ referenceCode: reference, colorCode: color })}`
+                : '';
             const title = product.title ?? product.name ?? 'Producto recomendado';
             const image = imageUrl(product);
             const price = product.discountPrice > 0 ? product.discountPrice : product.price;
@@ -281,7 +284,9 @@ function RecentProducts({ items, onAdd }) {
           const discountPercent = discount
             ? Math.round((1 - Number(product.discountPrice) / Number(product.price)) * 100)
             : 0;
-          const href = `/product?${new URLSearchParams({
+          const href = product.staticOnly
+            ? `/product?staticProduct=${encodeURIComponent(product.staticProductId)}`
+            : `/product?${new URLSearchParams({
             referenceCode: product.referenceCode,
             colorCode: product.colorCode,
           })}`;
@@ -339,15 +344,23 @@ function ProductHelp({ productName }) {
   );
 }
 
-function LocationList({ availability, loading, error }) {
+function LocationList({ availability, loading, error, staticOnly = false }) {
   const [expanded, setExpanded] = useState(true);
 
   return (
     <section className="product-locations">
       <p className="product-locations__status">
         <span aria-hidden="true">✓</span>
-        <strong>{loading ? 'Consultando disponibilidad' : error ? 'No se pudo consultar la disponibilidad' : `Disponible en ${availability.length} tiendas`}</strong>
-        {!loading && !error && ' y en la tienda en línea'}
+        <strong>
+          {staticOnly
+            ? 'Disponibilidad de muestra'
+            : loading
+              ? 'Consultando disponibilidad'
+              : error
+                ? 'No se pudo consultar la disponibilidad'
+                : `Disponible en ${availability.length} tiendas`}
+        </strong>
+        {!staticOnly && !loading && !error && ' y en la tienda en línea'}
       </p>
       {error && <p className="product-inline-error">{error}</p>}
       {!loading && !error && (
@@ -405,16 +418,31 @@ function RecommendationList({ items, loading, error, onAdd }) {
   );
 }
 
+const staticTestAvailability = [
+  { name: 'Tienda de prueba · San José' },
+  { name: 'Tienda de prueba · Heredia' },
+];
+
 export default function ProductPage() {
   const query = useMemo(() => new URLSearchParams(window.location.search), []);
-  const referenceCode = query.get('referenceCode') ?? '';
+  const staticProductId = query.get('staticProduct');
+  const isStaticProduct = staticProductId !== null;
+  const staticDetail = useMemo(
+    () => isStaticProduct ? createStaticProductDetail(staticProductId) : null,
+    [isStaticProduct, staticProductId],
+  );
+  const referenceCode = isStaticProduct ? staticProductId ?? '' : query.get('referenceCode') ?? '';
   const initialColorCode = query.get('colorCode') ?? '';
-  const missingProductCode = !referenceCode || !initialColorCode;
+  const missingProductCode = isStaticProduct
+    ? !staticDetail
+    : !referenceCode || !initialColorCode;
   const [colorCode, setColorCode] = useState(initialColorCode);
-  const [detail, setDetail] = useState(null);
-  const [loading, setLoading] = useState(!missingProductCode);
-  const [error, setError] = useState('');
-  const [selectedSize, setSelectedSize] = useState('');
+  const [detail, setDetail] = useState(staticDetail);
+  const [loading, setLoading] = useState(!isStaticProduct && !missingProductCode);
+  const [error, setError] = useState(isStaticProduct && !staticDetail ? 'No encontramos este producto de prueba.' : '');
+  const [selectedSize, setSelectedSize] = useState(
+    staticDetail?.products[0] ? String(staticDetail.products[0].externalId) : '',
+  );
   const [sizeSystem, setSizeSystem] = useState('US');
   const [quantity, setQuantity] = useState(1);
   const [availabilityResult, setAvailabilityResult] = useState(null);
@@ -425,6 +453,7 @@ export default function ProductPage() {
   const { agregar } = useCarrito();
 
   useEffect(() => {
+    if (isStaticProduct) return undefined;
     if (missingProductCode) return undefined;
 
     const controller = new AbortController();
@@ -445,7 +474,7 @@ export default function ProductPage() {
       });
 
     return () => controller.abort();
-  }, [referenceCode, colorCode, missingProductCode]);
+  }, [referenceCode, colorCode, isStaticProduct, missingProductCode]);
 
   const products = detail?.products ?? [];
   const product = products[0];
@@ -475,14 +504,36 @@ export default function ProductPage() {
     : selectedProduct?.price;
   const description = plainText(product?.htmlDescription);
   const selectedExternalId = selectedProduct?.externalId;
-  const availabilityLoading = Boolean(selectedExternalId && availabilityResult?.externalId !== selectedExternalId);
+  const availabilityLoading = !isStaticProduct
+    && Boolean(selectedExternalId && availabilityResult?.externalId !== selectedExternalId);
   const hasCurrentAvailability = Boolean(
     availabilityResult && availabilityResult.externalId === selectedExternalId,
   );
-  const availability = hasCurrentAvailability ? availabilityResult.locations : [];
+  const availability = isStaticProduct
+    ? staticTestAvailability
+    : hasCurrentAvailability ? availabilityResult.locations : [];
   const availabilityError = hasCurrentAvailability ? availabilityResult.error : '';
-  const recommendationsLoading = Boolean(referenceCode && recommendationResult?.referenceCode !== referenceCode);
-  const recommendations = recommendationResult?.referenceCode === referenceCode ? recommendationResult.items : [];
+  const recommendationsLoading = !isStaticProduct
+    && Boolean(referenceCode && recommendationResult?.referenceCode !== referenceCode);
+  const recommendations = isStaticProduct
+    ? staticCatalogProducts
+      .filter((item) => item.id !== staticProductId)
+      .slice(0, 4)
+      .map((item) => ({
+        product: {
+          referenceCode: item.id,
+          colorCode: 'TEST',
+          externalId: item.id,
+          title: item.name,
+          name: item.name,
+          brand: item.brand,
+          imageUrl: item.image,
+          price: item.compareAtPrice ?? item.price,
+          discountPrice: item.compareAtPrice ? item.price : 0,
+          staticOnly: true,
+        },
+      }))
+    : recommendationResult?.referenceCode === referenceCode ? recommendationResult.items : [];
   const recommendationsError = recommendationResult?.referenceCode === referenceCode ? recommendationResult.error : '';
 
   const recentItems = useMemo(() => {
@@ -491,6 +542,8 @@ export default function ProductPage() {
       referenceCode,
       colorCode,
       title: productName,
+      staticOnly: isStaticProduct,
+      staticProductId,
       image: images[0].url,
       imageUrl: images[0].url,
       price: selectedProduct.price,
@@ -504,7 +557,7 @@ export default function ProductPage() {
         (item) => item.referenceCode !== referenceCode || item.colorCode !== colorCode,
       ),
     ].slice(0, 12);
-  }, [colorCode, images, product, productName, recentProducts, referenceCode, selectedProduct]);
+  }, [colorCode, images, isStaticProduct, product, productName, recentProducts, referenceCode, selectedProduct, staticProductId]);
 
   useEffect(() => {
     if (!product || !selectedProduct || !images.length) return;
@@ -516,6 +569,7 @@ export default function ProductPage() {
   }, [images, product, recentItems, selectedProduct]);
 
   useEffect(() => {
+    if (isStaticProduct) return undefined;
     if (!selectedExternalId) return undefined;
     const controller = new AbortController();
     obtenerDisponibilidad(selectedExternalId, controller.signal)
@@ -530,9 +584,10 @@ export default function ProductPage() {
         }
       });
     return () => controller.abort();
-  }, [selectedExternalId]);
+  }, [isStaticProduct, selectedExternalId]);
 
   useEffect(() => {
+    if (isStaticProduct) return undefined;
     if (!referenceCode) return undefined;
     const controller = new AbortController();
     obtenerRecomendaciones(referenceCode, controller.signal)
@@ -547,9 +602,10 @@ export default function ProductPage() {
         }
       });
     return () => controller.abort();
-  }, [referenceCode]);
+  }, [isStaticProduct, referenceCode]);
 
   const changeColor = (nextColorCode) => {
+    if (isStaticProduct) return;
     setLoading(true);
     setError('');
     setDetail(null);
@@ -567,6 +623,7 @@ export default function ProductPage() {
       nombre: item.title,
       imagenes: [imageUrl(item) || images[0]?.url].filter(Boolean),
       precio: item.discountPrice > 0 ? item.discountPrice : item.price,
+      staticOnly: isStaticProduct || item.staticOnly,
     };
     const count = item === selectedProduct ? quantity : 1;
     for (let index = 0; index < count; index += 1) {
@@ -600,7 +657,7 @@ export default function ProductPage() {
             <>
               <header className="product-summary">
                 <h1>{productName}</h1>
-                <p>ref: {referenceCode} <span>·</span> color: {colorCode}</p>
+                <p>{isStaticProduct ? `Producto de prueba · ${staticDetail?.products[0]?.gender}` : <>ref: {referenceCode} <span>·</span> color: {colorCode}</>}</p>
                 <strong className="product-summary__price">{formatPrice(displayedPrice)}</strong>
               </header>
 
@@ -626,23 +683,28 @@ export default function ProductPage() {
               <section className="product-sizes" aria-label="Seleccionar talla">
                 <div className="product-sizes__heading">
                   <h2>Tallas:</h2>
-                  <div className="product-sizes__systems" role="group" aria-label="Sistema de tallas">
-                    {SIZE_SYSTEMS.map((system) => (
-                      <button
-                        key={system}
-                        type="button"
-                        className={system === sizeSystem ? 'is-active' : ''}
-                        aria-pressed={system === sizeSystem}
-                        onClick={() => setSizeSystem(system)}
-                      >
-                        Tallas {system}
-                      </button>
-                    ))}
-                  </div>
+                  {isStaticProduct ? (
+                    <span>Tallas de prueba</span>
+                  ) : (
+                    <div className="product-sizes__systems" role="group" aria-label="Sistema de tallas">
+                      {SIZE_SYSTEMS.map((system) => (
+                        <button
+                          key={system}
+                          type="button"
+                          className={system === sizeSystem ? 'is-active' : ''}
+                          aria-pressed={system === sizeSystem}
+                          onClick={() => setSizeSystem(system)}
+                        >
+                          Tallas {system}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className="product-sizes__options">
                   {sizes.map((item) => {
                     const outOfStock = item.stock <= 0 || item.availabilityStatus === 'out_of_stock';
+                    const sizeLabel = isStaticProduct ? String(item.size) : formatProductSize(item, sizeSystem);
                     return (
                       <span
                         className={`product-size-option${outOfStock ? ' is-unavailable' : ''}`}
@@ -653,14 +715,14 @@ export default function ProductPage() {
                           className={`${String(item.externalId) === selectedSize ? 'is-active' : ''}${outOfStock ? ' is-unavailable' : ''}`}
                           type="button"
                           disabled={outOfStock}
-                          aria-label={`${formatProductSize(item, sizeSystem)}${outOfStock ? ', agotada' : ''}`}
+                          aria-label={`${sizeLabel}${outOfStock ? ', agotada' : ''}`}
                           aria-pressed={String(item.externalId) === selectedSize}
                           onClick={() => {
                             setSelectedSize(String(item.externalId));
                             setQuantity(1);
                           }}
                         >
-                          {formatProductSize(item, sizeSystem)}
+                          {sizeLabel}
                         </button>
                       </span>
                     );
@@ -697,7 +759,12 @@ export default function ProductPage() {
               {feedback && <p className="product-feedback" role="status">{feedback}</p>}
 
               <TrustMarks />
-              <LocationList availability={availability} loading={availabilityLoading} error={availabilityError} />
+              <LocationList
+                availability={availability}
+                loading={availabilityLoading}
+                error={availabilityError}
+                staticOnly={isStaticProduct}
+              />
 
               <div className="product-accordions">
                 <details>

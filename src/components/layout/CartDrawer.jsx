@@ -35,7 +35,8 @@ export default function CartDrawer() {
     closeCart,
   } = useCarrito();
   const [recommendation, setRecommendation] = useState({ referenceCode: '', items: [], error: '' });
-  const referenceCode = items.find((item) => item.referenceCode)?.referenceCode ?? '';
+  const isTestCart = items.some((item) => item.staticOnly);
+  const referenceCode = isTestCart ? '' : items.find((item) => item.referenceCode)?.referenceCode ?? '';
 
   useEffect(() => {
     if (!isCartOpen || !referenceCode || recommendation.referenceCode === referenceCode) return undefined;
@@ -83,7 +84,11 @@ export default function CartDrawer() {
           <h2 id="cart-drawer-title">Carrito <span>{cantidadTotal}</span></h2>
           <button type="button" className="cart-drawer__close" aria-label="Cerrar carrito" onClick={closeCart}>×</button>
         </header>
-        <p className="cart-drawer__login">¿Tiene una cuenta? <a href="https://www.cachoscr.com/s/login">Inicie sesión</a> para pagar más rápido.</p>
+        {isTestCart ? (
+          <p className="cart-drawer__login">Modo de prueba: los productos y el carrito son datos locales.</p>
+        ) : (
+          <p className="cart-drawer__login">¿Tiene una cuenta? <a href="https://www.cachoscr.com/s/login">Inicie sesión</a> para pagar más rápido.</p>
+        )}
 
         <div className="cart-drawer__body">
           {items.length === 0 ? (
@@ -147,8 +152,14 @@ export default function CartDrawer() {
         {items.length > 0 && (
           <footer className="cart-drawer__summary">
             <p><span>Total estimado</span><strong>{formatPrice(total)}</strong></p>
-            <small>Aranceles e impuestos aplicables incluidos.</small>
-            <a href="https://www.cachoscr.com/checkout">Pagar</a>
+            {isTestCart ? (
+              <small>Carrito de prueba: el pago está deshabilitado.</small>
+            ) : (
+              <>
+                <small>Aranceles e impuestos aplicables incluidos.</small>
+                <a href="https://www.cachoscr.com/checkout">Pagar</a>
+              </>
+            )}
           </footer>
         )}
       </aside>
