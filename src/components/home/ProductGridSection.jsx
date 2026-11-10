@@ -1,5 +1,6 @@
 import { useRef } from 'react';
-import { formatPrice } from '../../utils/formatPrice.js';
+import ProductCard from '../../pages/products/components/ProductCard.jsx';
+import { normalizeHomeProduct } from '../../features/catalog/normalizeHomeProduct.js';
 
 const columnClasses = {
   3: 'xl:grid-cols-3',
@@ -51,16 +52,11 @@ export default function ProductGridSection({
           </button>
           <div className="best-sellers__track" ref={bestSellersTrack}>
             {products.map((product) => (
-              <article className="best-sellers__card" key={product.name}>
-                <a className="best-sellers__image-link" href={product.href ?? '#'} aria-label={product.name}>
-                  <img src={product.image} alt={product.name} loading="lazy" />
-                </a>
-                <a className="best-sellers__name" href={product.href ?? '#'}>{product.name}</a>
-                <div className="best-sellers__prices">
-                  <span>{formatPrice(product.price)}</span>
-                  {product.oldPrice && <del>{formatPrice(product.oldPrice)}</del>}
-                </div>
-              </article>
+              <ProductCard
+                key={product.name}
+                className="home-product-card"
+                product={normalizeHomeProduct(product)}
+              />
             ))}
           </div>
           <button
@@ -75,16 +71,7 @@ export default function ProductGridSection({
       ) : (
         <div className={`grid gap-5 md:grid-cols-2 ${columnClasses[columns] ?? columnClasses[4]}`}>
           {products.map((product) => (
-            <article key={product.name} className="overflow-hidden rounded-[18px] border border-black/10 bg-white transition hover:-translate-y-1">
-              <img src={product.image} alt={product.name} loading="lazy" className="h-[260px] w-full object-cover" />
-              <h3 className="px-4 pt-4 text-[0.88rem] font-bold uppercase leading-[1.35] tracking-[0.03em] text-black">
-                {product.name}
-              </h3>
-              <div className="flex items-center gap-3 px-4 pb-4 pt-3 text-sm font-extrabold">
-                <strong className="text-black">{formatPrice(product.price)}</strong>
-                {product.oldPrice && <span className="text-black/40 line-through">{formatPrice(product.oldPrice)}</span>}
-              </div>
-            </article>
+            <ProductCard key={product.name} product={normalizeHomeProduct(product)} />
           ))}
         </div>
       )}

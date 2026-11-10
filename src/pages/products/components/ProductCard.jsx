@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useCarrito } from '../../../features/cart/useCarrito.js';
 import { obtenerDetalleProducto } from '../../../features/product/productApi.js';
+import { formatProductSize, SIZE_SYSTEMS } from '../../../features/product/productSizes.js';
+import '../../../features/catalog/product-card.css';
 
 const formatPrice = (value) => new Intl.NumberFormat('es-CR', {
   style: 'currency', currency: 'CRC', maximumFractionDigits: 0,
@@ -11,9 +13,10 @@ const identifierValue = (value) => {
   return value?.code ?? value?.value ?? value?.name ?? null;
 };
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, className = '' }) {
   const [sizeModalOpen, setSizeModalOpen] = useState(false);
   const [availableSizes, setAvailableSizes] = useState([]);
+  const [sizeSystem, setSizeSystem] = useState('US');
   const [sizesLoading, setSizesLoading] = useState(false);
   const [sizesError, setSizesError] = useState('');
   const { agregar, openCart } = useCarrito();
@@ -44,6 +47,8 @@ export default function ProductCard({ product }) {
           .map((variant) => ({
             externalId: variant.externalId,
             size: String(variant.size ?? ''),
+            style: variant.style,
+            customValueA: variant.customValueA,
             stock: Number(variant.stock),
           }))
           .filter((variant) => variant.size);
@@ -82,13 +87,14 @@ export default function ProductCard({ product }) {
     event.stopPropagation();
     setAvailableSizes([]);
     setSizesError('');
+    setSizeSystem('US');
     setSizesLoading(Boolean(referenceCode && colorCode));
     setSizeModalOpen(true);
   };
 
   return (
     <>
-      <article className="products-card">
+      <article className={`products-card ${className}`.trim()}>
         <div className="products-card__media-wrap">
           <a className="products-card__media" href={detailUrl} aria-label={`Ver ${product.nombre}`}>
             {product.imagenes[0]
@@ -96,18 +102,21 @@ export default function ProductCard({ product }) {
               : <span className="products-card__placeholder">{product.nombre}</span>}
             {product.precioOriginal && <span className="products-card__sale">Oferta</span>}
           </a>
-          <button type="button" className="products-card__quick-view" onClick={openSizeModal} aria-label={`Agregar ${product.nombre} al carrito`}>
-            <svg viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2" /></svg>
-          </button>
         </div>
         <a className="products-card__body" href={detailUrl} aria-label={`Ver detalles de ${product.nombre}`}>
           {product.marca && <p className="products-card__brand">{product.marca}</p>}
           <h2>{product.nombre}</h2>
+        </a>
+        <div className="products-card__footer">
           <div className="products-card__prices">
             {product.precio !== null && <strong>{formatPrice(product.precio)}</strong>}
             {product.precioOriginal && <del>{formatPrice(product.precioOriginal)}</del>}
           </div>
-        </a>
+          <button type="button" className="products-card__quick-view" onClick={openSizeModal} aria-label={`Añadir ${product.nombre} al carrito`}>
+            Añadir al carrito
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2" /></svg>
+          </button>
+        </div>
       </article>
 
       {sizeModalOpen && (
@@ -120,7 +129,22 @@ export default function ProductCard({ product }) {
               {product.imagenes[0] && <img src={product.imagenes[0]} alt="" />}
               <h3 id="size-modal-title">{product.nombre}</h3>
             </div>
-            <p className="product-size-modal__label">Elija su talla</p>
+            <div className="product-size-modal__heading">
+              <p className="product-size-modal__label">Escoja su talla</p>
+              <div className="product-size-modal__systems" role="group" aria-label="Sistema de tallas">
+                {SIZE_SYSTEMS.map((system) => (
+                  <button
+                    key={system}
+                    type="button"
+                    className={system === sizeSystem ? 'is-active' : ''}
+                    aria-pressed={system === sizeSystem}
+                    onClick={() => setSizeSystem(system)}
+                  >
+                    Tallas {system === 'CM' ? 'Cm' : system}
+                  </button>
+                ))}
+              </div>
+            </div>
             {sizesLoading && <p className="product-size-modal__empty" role="status">Cargando tallas disponibles…</p>}
             {(!referenceCode || !colorCode) && (
               <p className="product-size-modal__error" role="alert">
@@ -135,9 +159,19 @@ export default function ProductCard({ product }) {
             )}
             {referenceCode && colorCode && !sizesLoading && !sizesError && availableSizes.length ? (
               <div className="product-size-modal__sizes">
-                {availableSizes.map((variant) => (
-                  <button type="button" key={variant.externalId ?? variant.size} onClick={() => addWithSize(variant)}>{variant.size}</button>
-                ))}
+                {availableSizes.map((variant) => {
+                  const label = formatProductSize(variant, sizeSystem);
+                  return (
+                    <button
+                      type="button"
+                      key={variant.externalId ?? variant.size}
+                      aria-label={`Talla ${label}`}
+                      onClick={() => addWithSize(variant)}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
               </div>
             ) : referenceCode && colorCode && !sizesLoading && !sizesError && (
               <p className="product-size-modal__empty">Este producto no tiene tallas disponibles.</p>

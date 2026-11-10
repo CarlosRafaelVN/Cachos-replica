@@ -5,6 +5,7 @@ import WhatsAppLink from '../../components/layout/WhatsAppLink.jsx';
 import CatalogBreadcrumb from './components/CatalogBreadcrumb.jsx';
 import CatalogFilters from './components/CatalogFilters.jsx';
 import CategoryExplorer, { catalogCategories } from './components/CategoryExplorer.jsx';
+import CatalogPagination from '../../features/catalog/components/CatalogPagination.jsx';
 import CatalogPromotions from './components/CatalogPromotions.jsx';
 import ProductCard from './components/ProductCard.jsx';
 import { obtenerCalzado } from '../../features/catalog/catalogApi.js';
@@ -24,7 +25,8 @@ export default function ProductCatalogPage() {
   const [sort, setSort] = useState('relevance');
   const [size, setSize] = useState('');
   const [gender, setGender] = useState(() => catalogParams.get('gender') || (catalogParams.get('category') === 'Niños' ? 'ninos' : ''));
-  const [visibleCount, setVisibleCount] = useState(16);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 16;
 
   useEffect(() => {
     obtenerCalzado()
@@ -55,14 +57,26 @@ export default function ProductCatalogPage() {
     return 0;
   }), [products, query, search, sort, size, gender, category, offersOnly]);
 
-  useEffect(() => {
-    setVisibleCount(16);
-  }, [query, search, sort, size, gender, category, offersOnly]);
-
   const chooseBrand = (brand) => {
     setQuery(brand);
+    setCurrentPage(1);
     const url = brand ? `/products?brand=${encodeURIComponent(brand)}` : '/products';
     window.history.replaceState({}, '', url);
+  };
+
+  const chooseSort = (value) => {
+    setSort(value);
+    setCurrentPage(1);
+  };
+
+  const chooseSize = (value) => {
+    setSize(value);
+    setCurrentPage(1);
+  };
+
+  const chooseGender = (value) => {
+    setGender(value);
+    setCurrentPage(1);
   };
 
   const resetFilters = () => {
@@ -72,8 +86,16 @@ export default function ProductCatalogPage() {
     setCategory('');
     setOffersOnly(false);
     setSort('relevance');
+    setCurrentPage(1);
     window.history.replaceState({}, '', '/products');
   };
+
+  const totalPages = Math.ceil(filteredProducts.length / pageSize);
+  const displayedPage = Math.min(currentPage, Math.max(totalPages, 1));
+  const pageProducts = filteredProducts.slice(
+    (displayedPage - 1) * pageSize,
+    displayedPage * pageSize,
+  );
 
   return (
     <div className="min-h-screen bg-white text-black antialiased">
@@ -87,11 +109,11 @@ export default function ProductCatalogPage() {
             brand={query}
             setBrand={chooseBrand}
             sort={sort}
-            setSort={setSort}
+            setSort={chooseSort}
             size={size}
-            setSize={setSize}
+            setSize={chooseSize}
             gender={gender}
-            setGender={setGender}
+            setGender={chooseGender}
             products={products}
             resetFilters={resetFilters}
           />
@@ -100,22 +122,15 @@ export default function ProductCatalogPage() {
             {error && <div className="products-state products-state--error">No pudimos cargar el catálogo. {error}</div>}
             {!loading && !error && filteredProducts.length === 0 && <div className="products-state">No encontramos productos con estos filtros.</div>}
             <div className="products-grid">
-              {filteredProducts.slice(0, visibleCount).map((product) => <ProductCard key={product.id} product={product} />)}
+              {pageProducts.map((product) => <ProductCard key={product.id} product={product} />)}
             </div>
             {!loading && !error && filteredProducts.length > 0 && (
-              <div className="catalog-pagination">
-                <p className="catalog-pagination__count" aria-live="polite">
-                  Mostrando {Math.min(visibleCount, filteredProducts.length)} de {filteredProducts.length}
-                </p>
-                <div className="catalog-pagination__progress" role="progressbar" aria-label="Productos mostrados" aria-valuemin="0" aria-valuemax={filteredProducts.length} aria-valuenow={Math.min(visibleCount, filteredProducts.length)}>
-                  <span style={{ width: `${Math.min(100, (Math.min(visibleCount, filteredProducts.length) / filteredProducts.length) * 100)}%` }} />
-                </div>
-                {visibleCount < filteredProducts.length && (
-                  <button type="button" className="catalog-pagination__more" onClick={() => setVisibleCount((current) => current + 16)}>
-                    Mostrar más <span aria-hidden="true" />
-                  </button>
-                )}
-              </div>
+              <CatalogPagination
+                currentPage={displayedPage}
+                pageSize={pageSize}
+                totalItems={filteredProducts.length}
+                onPageChange={setCurrentPage}
+              />
             )}
           </div>
         </section>

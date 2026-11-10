@@ -8,9 +8,9 @@ import {
   obtenerDisponibilidad,
   obtenerRecomendaciones,
 } from '../features/product/productApi.js';
+import { formatProductSize, SIZE_SYSTEMS } from '../features/product/productSizes.js';
 import { formatPrice } from '../utils/formatPrice.js';
 
-const SIZE_SYSTEMS = ['US', 'EU', 'CM'];
 const RECENT_PRODUCTS_KEY = 'cachos-recent-products';
 
 function readRecentProducts() {
@@ -192,19 +192,45 @@ function RelatedProducts({ items, loading, error }) {
             const title = product.title ?? product.name ?? 'Producto recomendado';
             const image = imageUrl(product);
             const price = product.discountPrice > 0 ? product.discountPrice : product.price;
-            const content = (
-              <>
-                <div className="related-products__image">
-                  {image && <img src={image} alt={title} loading="lazy" />}
-                </div>
-                <h3>{title}</h3>
-                {price != null && <strong>{formatPrice(price)}</strong>}
-              </>
-            );
+            const brand = typeof product.brand === 'string' ? product.brand : product.brand?.name;
 
             return (
               <article className="related-products__card" key={`${reference ?? title}-${color ?? index}`}>
-                {href ? <a href={href}>{content}</a> : <div>{content}</div>}
+                {href ? (
+                  <a className="related-products__image-link" href={href} aria-label={`Ver ${title}`}>
+                    <div className="related-products__image">
+                      {image && <img src={image} alt={title} loading="lazy" />}
+                    </div>
+                  </a>
+                ) : (
+                  <div className="related-products__image-link">
+                    <div className="related-products__image">
+                      {image && <img src={image} alt={title} loading="lazy" />}
+                    </div>
+                  </div>
+                )}
+                {href ? (
+                  <a className="related-products__body" href={href}>
+                    {brand && <p className="related-products__brand">{brand}</p>}
+                    <h3>{title}</h3>
+                  </a>
+                ) : (
+                  <div className="related-products__body">
+                    {brand && <p className="related-products__brand">{brand}</p>}
+                    <h3>{title}</h3>
+                  </div>
+                )}
+                <div className="related-products__footer">
+                  {price != null && <strong>{formatPrice(price)}</strong>}
+                  {href && (
+                    <a className="related-products__action" href={href} aria-label={`Ver ${title}`}>
+                      Ver producto
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2" />
+                      </svg>
+                    </a>
+                  )}
+                </div>
               </article>
             );
           })}
@@ -276,10 +302,11 @@ function RecentProducts({ items, onAdd }) {
               <button
                 className="recent-product__add"
                 type="button"
-                aria-label={`Agregar ${product.title} al carrito`}
+                aria-label={`Añadir ${product.title} al carrito`}
                 onClick={() => onAdd(product)}
               >
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l1 13H5L6 8Z" /><path d="M9 8V6a3 3 0 0 1 6 0v2" /><path d="M12 12v5m-2.5-2.5h5" /></svg>
+                Añadir al carrito
               </button>
             </article>
           );
@@ -355,14 +382,22 @@ function RecommendationList({ items, loading, error, onAdd }) {
       {items.map((item, index) => {
         const product = item.product ?? item;
         const image = imageUrl(product);
+        const title = product.title ?? product.name ?? 'Producto recomendado';
+        const brand = typeof product.brand === 'string' ? product.brand : product.brand?.name;
         return (
           <article className="product-recommendation" key={`${product.referenceCode}-${product.colorCode}-${index}`}>
-            <img src={image} alt={product.title ?? 'Producto recomendado'} loading="lazy" />
-            <div>
-              <h4>{product.title}</h4>
+            <div className="product-recommendation__image">
+              <img src={image} alt={title} loading="lazy" />
+            </div>
+            <div className="product-recommendation__details">
+              {brand && <p className="product-recommendation__brand">{brand}</p>}
+              <h4>{title}</h4>
               <strong>{formatPrice(product.discountPrice > 0 ? product.discountPrice : product.price)}</strong>
             </div>
-            <button type="button" onClick={() => onAdd(product)}>Agregar</button>
+            <button type="button" onClick={() => onAdd(product)}>
+              Añadir al carrito
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2" /></svg>
+            </button>
           </article>
         );
       })}
@@ -540,18 +575,6 @@ export default function ProductPage() {
     setFeedback(`${item.title} se agregó${count > 1 ? ` (${count})` : ''} al carrito.`);
   };
 
-  const formatSize = (item) => {
-    if (sizeSystem === 'EU') {
-      const europeanSize = String(item.style ?? '').replace(/\s*EUR$/i, '').trim();
-      return europeanSize ? `${europeanSize} EUR` : '—';
-    }
-    if (sizeSystem === 'CM') {
-      const centimeterSize = String(item.customValueA ?? '').replace(/\s*cm$/i, '').trim();
-      return centimeterSize ? `${centimeterSize} cm` : '—';
-    }
-    return item.size;
-  };
-
   return (
     <div id="top" className="product-page">
       <SiteHeader />
@@ -630,14 +653,14 @@ export default function ProductPage() {
                           className={`${String(item.externalId) === selectedSize ? 'is-active' : ''}${outOfStock ? ' is-unavailable' : ''}`}
                           type="button"
                           disabled={outOfStock}
-                          aria-label={`${formatSize(item)}${outOfStock ? ', agotada' : ''}`}
+                          aria-label={`${formatProductSize(item, sizeSystem)}${outOfStock ? ', agotada' : ''}`}
                           aria-pressed={String(item.externalId) === selectedSize}
                           onClick={() => {
                             setSelectedSize(String(item.externalId));
                             setQuantity(1);
                           }}
                         >
-                          {formatSize(item)}
+                          {formatProductSize(item, sizeSystem)}
                         </button>
                       </span>
                     );

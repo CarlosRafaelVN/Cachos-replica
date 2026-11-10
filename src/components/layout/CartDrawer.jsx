@@ -134,7 +134,7 @@ export default function CartDrawer() {
                             ? <img src={product.imagen} alt="" loading="lazy" />
                             : <span className="cart-drawer__image-placeholder" />}
                           <div><strong>{product.nombre}</strong><b>{formatPrice(product.precio)}</b></div>
-                          <button type="button" onClick={() => agregar(product, product.talla)}>Agregar</button>
+                          <button type="button" onClick={() => agregar(product, product.talla)}>Añadir al carrito</button>
                         </article>
                       );
                     })}
