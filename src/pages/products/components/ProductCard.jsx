@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useCarrito } from '../../../features/cart/useCarrito.js';
 import { obtenerDetalleProducto } from '../../../features/product/productApi.js';
-import { appUrl } from '../../../utils/routes.js';
 
 const formatPrice = (value) => new Intl.NumberFormat('es-CR', {
   style: 'currency', currency: 'CRC', maximumFractionDigits: 0,
@@ -21,9 +20,9 @@ export default function ProductCard({ product }) {
   const raw = product.crudo ?? {};
   const referenceCode = identifierValue(product.referenceCode ?? raw.referenceCode ?? raw.reference);
   const colorCode = identifierValue(product.colorCode ?? raw.colorCode ?? raw.color);
-  const detailUrl = appUrl(referenceCode && colorCode
+  const detailUrl = referenceCode && colorCode
     ? `/product?${new URLSearchParams({ referenceCode: String(referenceCode), colorCode: String(colorCode) })}`
-    : '/product');
+    : '/product';
   useEffect(() => {
     if (!sizeModalOpen) return undefined;
     const closeOnEscape = (event) => {

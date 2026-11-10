@@ -130,18 +130,18 @@ export default function CategoryExplorer({ products = [] }) {
     <section className="catalog-categories" aria-labelledby="categories-title">
       <div className="catalog-categories__header">
         <h2 id="categories-title">Explora por <span>categoría</span></h2>
-        <a href={appUrl('/products')}>Ver todo <b aria-hidden="true">→</b></a>
+        <a href="/products">Ver todo <b aria-hidden="true">→</b></a>
       </div>
       <div className="catalog-categories__list">
         {catalogCategories.map((category) => (
-          <a className="catalog-category" href={appUrl(`/products?category=${encodeURIComponent(category.name)}`)} key={category.name}>
+          <a className="catalog-category" href={`/products?category=${encodeURIComponent(category.name)}`} key={category.name}>
             <span className="catalog-category__image">
               <CategoryImage src={categoryImage(category)} name={category.name} />
             </span>
             <strong>{category.name}</strong>
           </a>
         ))}
-        <a className="catalog-category catalog-category--offers" href={appUrl('/products?offers=1')}>
+        <a className="catalog-category catalog-category--offers" href="/products?offers=1">
           <span><b>%</b></span>
           <strong>Ofertas</strong>
         </a>
@@ -149,4 +149,3 @@ export default function CategoryExplorer({ products = [] }) {
     </section>
   );
 }
-import { appUrl } from '../../../utils/routes.js';

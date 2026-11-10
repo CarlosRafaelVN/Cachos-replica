@@ -10,7 +10,6 @@ import ProductCard from './components/ProductCard.jsx';
 import { obtenerCalzado } from '../../features/catalog/catalogApi.js';
 import { extraerProductos, normalizarProducto } from '../../features/catalog/normalizeProduct.js';
 import '../../features/catalog/catalog.css';
-import { appUrl } from '../../utils/routes.js';
 
 
 export default function ProductCatalogPage() {
@@ -63,7 +62,7 @@ export default function ProductCatalogPage() {
   const chooseBrand = (brand) => {
     setQuery(brand);
     const url = brand ? `/products?brand=${encodeURIComponent(brand)}` : '/products';
-    window.history.replaceState({}, '', appUrl(url));
+    window.history.replaceState({}, '', url);
   };
 
   const resetFilters = () => {
@@ -73,7 +72,7 @@ export default function ProductCatalogPage() {
     setCategory('');
     setOffersOnly(false);
     setSort('relevance');
-    window.history.replaceState({}, '', appUrl('/products'));
+    window.history.replaceState({}, '', '/products');
   };
 
   return (

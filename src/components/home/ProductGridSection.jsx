@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 import { formatPrice } from '../../utils/formatPrice.js';
-import { appUrl } from '../../utils/routes.js';
 
 const columnClasses = {
   3: 'xl:grid-cols-3',
@@ -53,10 +52,10 @@ export default function ProductGridSection({
           <div className="best-sellers__track" ref={bestSellersTrack}>
             {products.map((product) => (
               <article className="best-sellers__card" key={product.name}>
-                <a className="best-sellers__image-link" href={appUrl(product.href ?? '#')} aria-label={product.name}>
+                <a className="best-sellers__image-link" href={product.href ?? '#'} aria-label={product.name}>
                   <img src={product.image} alt={product.name} loading="lazy" />
                 </a>
-                <a className="best-sellers__name" href={appUrl(product.href ?? '#')}>{product.name}</a>
+                <a className="best-sellers__name" href={product.href ?? '#'}>{product.name}</a>
                 <div className="best-sellers__prices">
                   <span>{formatPrice(product.price)}</span>
                   {product.oldPrice && <del>{formatPrice(product.oldPrice)}</del>}

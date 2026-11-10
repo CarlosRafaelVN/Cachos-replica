@@ -1,6 +1,5 @@
 import { useCarrito } from '../../features/cart/useCarrito.js';
 import { navItems } from '../../data/homePageData.js';
-import { appUrl } from '../../utils/routes.js';
 
 const navHrefs = {
   Novedades: '/products',
@@ -47,7 +46,7 @@ export default function SiteHeader() {
       </div>
 
       <div className="mx-auto grid max-w-[1600px] grid-cols-[1fr_auto_1fr] items-center px-4 py-4 lg:px-6">
-        <a href={appUrl('/')} className="col-start-2 justify-self-center" aria-label="Cachos inicio">
+        <a href="/" className="col-start-2 justify-self-center" aria-label="Cachos inicio">
           <img
             src="https://cms.blumewebsites.com/cachos/website/logo.png"
             alt="Cachos"
@@ -72,7 +71,7 @@ export default function SiteHeader() {
       <nav className="flex items-center gap-6 overflow-x-auto border-t border-black/10 px-4 py-3 lg:justify-center lg:gap-10 lg:px-6" aria-label="Navegación principal">
         {navItems.map((item) => (
           <a
-            href={appUrl(navHrefs[item] ?? '/products')}
+            href={navHrefs[item] ?? '/products'}
             key={item}
             className="shrink-0 text-[11px] font-bold uppercase tracking-[0.08em] text-black transition hover:opacity-70"
             style={item === 'Ofertas' ? { color: '#DF1F25' } : undefined}

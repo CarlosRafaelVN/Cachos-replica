@@ -6,7 +6,7 @@ export default function ContentCardsSection({ title, items }) {
       </h2>
       <div className="content-cards-section__grid">
         {items.map((item) => (
-          <a className="content-cards-section__card" href={appUrl(item.href)} key={item.title}>
+          <a className="content-cards-section__card" href={item.href} key={item.title}>
             <img
               className="content-cards-section__image"
               src={item.image}
@@ -27,4 +27,3 @@ export default function ContentCardsSection({ title, items }) {
     </section>
   );
 }
-import { appUrl } from '../../utils/routes.js';

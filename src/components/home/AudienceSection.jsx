@@ -1,5 +1,4 @@
 import { personas } from '../../data/homePageData.js';
-import { appUrl } from '../../utils/routes.js';
 
 export default function AudienceSection() {
   return (
@@ -8,7 +7,7 @@ export default function AudienceSection() {
         <h2 className="audience-section__title">¿PARA QUIÉN <span>BUSCÁS?</span></h2>
         <div className="audience-section__grid">
           {personas.map((persona) => (
-            <a className="audience-section__card" href={appUrl(persona.href)} key={persona.label}>
+            <a className="audience-section__card" href={persona.href} key={persona.label}>
               <span className="audience-section__image">
                 <img src={persona.image} alt={persona.alt} loading="lazy" />
                 {persona.badge && (

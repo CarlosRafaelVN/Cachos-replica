@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { formatPrice } from '../../utils/formatPrice.js';
-import { appUrl } from '../../utils/routes.js';
 
 export default function ViralCarouselSection({ products }) {
   const [activeIndex, setActiveIndex] = useState(3);
@@ -73,20 +72,20 @@ export default function ViralCarouselSection({ products }) {
                 </div>
 
                 <div className="viral-carousel__product">
-                  <a className="viral-carousel__thumb" href={appUrl(product.href)} aria-label={product.name}>
+                  <a className="viral-carousel__thumb" href={product.href} aria-label={product.name}>
                     <img src={product.image} alt="" loading="lazy" />
                   </a>
                   <div className="viral-carousel__details">
-                    <a className="viral-carousel__product-link" href={appUrl(product.href)}>
+                    <a className="viral-carousel__product-link" href={product.href}>
                       <span className="viral-carousel__name">{product.name}</span>
                       <span className="viral-carousel__price">{formatPrice(product.price)}</span>
                     </a>
-                    <a className="viral-carousel__more" href={appUrl(product.catalogHref)}>
+                    <a className="viral-carousel__more" href={product.catalogHref}>
                       <span aria-hidden="true">⌃</span>
                       Ver todos ({product.count})
                     </a>
                   </div>
-                  <a className="viral-carousel__add" href={appUrl(product.href)} aria-label={`Ver ${product.name}`}>
+                  <a className="viral-carousel__add" href={product.href} aria-label={`Ver ${product.name}`}>
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                       <path d="M8.25 8V6.75a3.75 3.75 0 0 1 7.5 0V8m4.2 1.1 1.1 10.1a1 1 0 0 1-1 1.1H5.95a1 1 0 0 1-1-1.1l1.1-10.1a1 1 0 0 1 1-.9h11.9a1 1 0 0 1 1 .9ZM12 12v5m2.5-2.5h-5" />
                     </svg>

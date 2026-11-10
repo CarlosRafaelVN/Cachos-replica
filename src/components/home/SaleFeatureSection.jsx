@@ -60,18 +60,18 @@ export default function SaleFeatureSection() {
           <p className="sale-feature__description">
             Tenis, botas, sandalias y accesorios con descuento. Cuando se acaban, se acaban.
           </p>
-          <a className="sale-feature__cta" href={appUrl('/products?offers=1')}>
+          <a className="sale-feature__cta" href="/sale">
             Ver todas las ofertas <span aria-hidden="true">→</span>
           </a>
           <div className="sale-feature__categories">
             <span>Todo para:</span>
             {saleCategories.map((category) => (
-              <a href={appUrl(category.href.replace('/sale?', '/products?offers=1&'))} key={category.label}>{category.label}</a>
+              <a href={category.href} key={category.label}>{category.label}</a>
             ))}
           </div>
         </div>
 
-        <a className="sale-feature__art" href={appUrl('/products?offers=1')} aria-label="Ver todas las ofertas">
+        <a className="sale-feature__art" href="/sale" aria-label="Ver todas las ofertas">
           <img
             src="https://cms.blumewebsites.com/cachos/website/cx-vans-oldskool.jpg"
             alt="Persona usando Vans Old Skool negras"
@@ -88,4 +88,3 @@ export default function SaleFeatureSection() {
     </section>
   );
 }
-import { appUrl } from '../../utils/routes.js';
