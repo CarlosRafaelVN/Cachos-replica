@@ -24,8 +24,8 @@ export default function ProductCard({ product, className = '', staticOnly = fals
   const referenceCode = identifierValue(product.referenceCode ?? raw.referenceCode ?? raw.reference);
   const colorCode = identifierValue(product.colorCode ?? raw.colorCode ?? raw.color);
   const isStaticProduct = staticOnly || product.staticOnly || raw.staticOnly;
-  const detailUrl = staticOnly
-    ? `/product?staticProduct=${encodeURIComponent(raw.id ?? product.id)}`
+  const detailUrl = isStaticProduct
+    ? `/product?staticProduct=${encodeURIComponent(product.staticProductId ?? raw.id ?? product.id)}`
     : referenceCode && colorCode
     ? `/product?${new URLSearchParams({ referenceCode: String(referenceCode), colorCode: String(colorCode) })}`
     : '/product';
@@ -79,7 +79,7 @@ export default function ProductCard({ product, className = '', staticOnly = fals
   const addWithSize = (variant) => {
     agregar({
       ...product,
-      staticOnly: staticOnly || product.staticOnly,
+      staticOnly: isStaticProduct,
       id: variant.externalId ?? product.id,
       referenceCode,
       colorCode,
@@ -94,7 +94,7 @@ export default function ProductCard({ product, className = '', staticOnly = fals
   const openSizeModal = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    setAvailableSizes(staticOnly
+    setAvailableSizes(isStaticProduct
       ? product.tallas.map((size) => ({
         size: String(size),
         style: String(size),
@@ -103,7 +103,7 @@ export default function ProductCard({ product, className = '', staticOnly = fals
       : []);
     setSizesError('');
     setSizeSystem('US');
-    setSizesLoading(!staticOnly && Boolean(referenceCode && colorCode));
+    setSizesLoading(!isStaticProduct && Boolean(referenceCode && colorCode));
     setSizeModalOpen(true);
   };
 
@@ -111,7 +111,7 @@ export default function ProductCard({ product, className = '', staticOnly = fals
     <>
       <article className={`products-card ${className}`.trim()}>
         <div className="products-card__media-wrap">
-          {staticOnly ? (
+          {isStaticProduct ? (
             <a className="products-card__media" href={detailUrl} aria-label={`Ver ${product.nombre}`}>
               {product.imagenes[0]
                 ? <img src={product.imagenes[0]} alt={product.nombre} loading="lazy" />
@@ -127,7 +127,7 @@ export default function ProductCard({ product, className = '', staticOnly = fals
             </a>
           )}
         </div>
-        {staticOnly ? (
+        {isStaticProduct ? (
           <a className="products-card__body" href={detailUrl} aria-label={`Ver detalles de ${product.nombre}`}>
             {product.marca && <p className="products-card__brand">{product.marca}</p>}
             <h2>{product.nombre}</h2>
@@ -177,7 +177,7 @@ export default function ProductCard({ product, className = '', staticOnly = fals
               </div>
             </div>
             {sizesLoading && <p className="product-size-modal__empty" role="status">Cargando tallas disponibles…</p>}
-            {!staticOnly && (!referenceCode || !colorCode) && (
+            {!isStaticProduct && (!referenceCode || !colorCode) && (
               <p className="product-size-modal__error" role="alert">
                 No se pudieron identificar las variantes de este producto.
               </p>
@@ -188,7 +188,7 @@ export default function ProductCard({ product, className = '', staticOnly = fals
                 <button type="button" onClick={() => setSizeModalOpen(false)}>Cerrar</button>
               </p>
             )}
-            {(staticOnly || (referenceCode && colorCode)) && !sizesLoading && !sizesError && availableSizes.length ? (
+            {(isStaticProduct || (referenceCode && colorCode)) && !sizesLoading && !sizesError && availableSizes.length ? (
               <div className="product-size-modal__sizes">
                 {availableSizes.map((variant) => {
                   const label = formatProductSize(variant, sizeSystem);
@@ -204,7 +204,7 @@ export default function ProductCard({ product, className = '', staticOnly = fals
                   );
                 })}
               </div>
-            ) : (staticOnly || (referenceCode && colorCode)) && !sizesLoading && !sizesError && (
+            ) : (isStaticProduct || (referenceCode && colorCode)) && !sizesLoading && !sizesError && (
               <p className="product-size-modal__empty">Este producto no tiene tallas disponibles.</p>
             )}
           </section>

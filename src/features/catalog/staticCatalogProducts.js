@@ -18,6 +18,7 @@ const getFamily = (name) => {
   if (normalizedName.includes('VASO') || normalizedName.includes('BOTELLA') || normalizedName.includes('TAZA')) return 'VASO';
   if (normalizedName.includes('BILLETERA') || normalizedName.includes('CARTERA')) return 'BILLETERA';
   if (normalizedName.includes('ROPA') || normalizedName.includes('CAMISETA') || normalizedName.includes('ABRIGO')) return 'ROPA';
+  if (normalizedName.includes('FAJA')) return 'ACCESORIO';
   return 'TENIS';
 };
 
@@ -89,6 +90,11 @@ export const staticCatalogProducts = [
     description: descriptionsByFamily[product.family],
   })),
 ];
+
+export function getStaticProductHref(name) {
+  const product = staticCatalogProducts.find((item) => item.name === name);
+  return product ? `/product?staticProduct=${encodeURIComponent(product.id)}` : '/products';
+}
 
 export function createStaticProductDetail(productId) {
   const product = staticCatalogProducts.find((item) => item.id === productId);
