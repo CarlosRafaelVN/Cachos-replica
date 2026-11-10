@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { appUrl } from '../../utils/routes.js';
 
 const trendingPairs = [
   {
@@ -60,8 +61,8 @@ export default function PairCardsSection() {
           <h2 className="trending-pair__title">Elegí tu<br /><em>próximo par</em></h2>
           <p className="trending-pair__description">{pair.description}</p>
           <div className="trending-pair__actions">
-            <a className="trending-pair__primary" href={pair.href}>{pair.action}</a>
-            <a className="trending-pair__secondary" href="/products">Ver catálogo</a>
+            <a className="trending-pair__primary" href={appUrl(pair.href)}>{pair.action}</a>
+            <a className="trending-pair__secondary" href={appUrl('/products')}>Ver catálogo</a>
           </div>
           <div className="trending-pair__pagination" aria-label="Elegir par destacado">
             {trendingPairs.map((item, index) => (

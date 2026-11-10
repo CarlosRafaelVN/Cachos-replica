@@ -9,6 +9,7 @@ import {
   obtenerRecomendaciones,
 } from '../features/product/productApi.js';
 import { formatPrice } from '../utils/formatPrice.js';
+import { appUrl } from '../utils/routes.js';
 
 const SIZE_SYSTEMS = ['US', 'EU', 'CM'];
 const RECENT_PRODUCTS_KEY = 'cachos-recent-products';
@@ -204,7 +205,7 @@ function RelatedProducts({ items, loading, error }) {
 
             return (
               <article className="related-products__card" key={`${reference ?? title}-${color ?? index}`}>
-                {href ? <a href={href}>{content}</a> : <div>{content}</div>}
+                {href ? <a href={appUrl(href)}>{content}</a> : <div>{content}</div>}
               </article>
             );
           })}
@@ -262,7 +263,7 @@ function RecentProducts({ items, onAdd }) {
 
           return (
             <article className="recent-product" key={`${product.referenceCode}-${product.colorCode}`}>
-              <a className="recent-product__link" href={href}>
+              <a className="recent-product__link" href={appUrl(href)}>
                 <div className="recent-product__image">
                   {discount && <span className="recent-product__discount">-{discountPercent}%</span>}
                   {product.image && <img src={product.image} alt={product.title} loading="lazy" />}
@@ -562,7 +563,7 @@ export default function ProductPage() {
 
         <section className="product-page__details" aria-label="Información del producto">
           <nav className="product-breadcrumbs" aria-label="Ruta de navegación">
-            <a href="/">Inicio</a><span>›</span><a href="/catalog">Catálogo</a><span>›</span><span>{productName}</span>
+            <a href={appUrl('/')}>Inicio</a><span>›</span><a href={appUrl('/products')}>Catálogo</a><span>›</span><span>{productName}</span>
           </nav>
 
           {loading && <p className="product-page__state" role="status">Cargando información del producto…</p>}

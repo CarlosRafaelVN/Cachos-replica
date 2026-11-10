@@ -19,12 +19,12 @@ export default function BrandSection() {
       <div className="brand-showcase__inner">
         <div className="brand-showcase__header">
           <h2 className="brand-showcase__title">Nuestras <em>marcas</em></h2>
-          <a className="brand-showcase__catalog" href="/products">Ver catálogo <span aria-hidden="true">→</span></a>
+          <a className="brand-showcase__catalog" href={appUrl('/products')}>Ver catálogo <span aria-hidden="true">→</span></a>
         </div>
 
         <div className="brand-showcase__track">
           {brandCards.map((brand) => (
-            <a className="brand-showcase__card" href={brand.href} key={brand.name}>
+            <a className="brand-showcase__card" href={appUrl(brand.href)} key={brand.name}>
               <span className="brand-showcase__image">
                 <img src={brand.image} alt={brand.name} loading="lazy" />
               </span>
@@ -33,8 +33,9 @@ export default function BrandSection() {
           ))}
         </div>
 
-        <a className="brand-showcase__all" href="/products">Ver todas las marcas (32)</a>
+        <a className="brand-showcase__all" href={appUrl('/products')}>Ver todas las marcas (32)</a>
       </div>
     </section>
   );
 }
+import { appUrl } from '../../utils/routes.js';

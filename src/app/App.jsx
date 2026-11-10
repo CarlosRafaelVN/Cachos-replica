@@ -3,11 +3,13 @@ import ProductPage from '../pages/ProductPage.jsx';
 import ProductCatalogPage from '../pages/products/ProductCatalogPage.jsx';
 import CartDrawer from '../components/layout/CartDrawer.jsx';
 import { CartProvider } from '../features/cart/useCarrito.js';
+import { appPathname } from '../utils/routes.js';
 
 export default function App() {
   let page = <HomePage />;
-  if (window.location.pathname === '/product') page = <ProductPage />;
-  if (window.location.pathname === '/products') page = <ProductCatalogPage />;
+  const pathname = appPathname();
+  if (pathname === '/product') page = <ProductPage />;
+  if (pathname === '/products') page = <ProductCatalogPage />;
 
   return (
     <CartProvider>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { obtenerRecomendaciones } from '../../features/product/productApi.js';
 import { useCarrito } from '../../features/cart/useCarrito.js';
 import { formatPrice } from '../../utils/formatPrice.js';
+import { appUrl } from '../../utils/routes.js';
 
 function getUpsellProduct(item) {
   const product = item.product ?? item;
@@ -89,7 +90,7 @@ export default function CartDrawer() {
           {items.length === 0 ? (
             <div className="cart-drawer__empty">
               <p>Tu carrito está vacío.</p>
-              <a href="/products" onClick={closeCart}>Explorar productos</a>
+              <a href={appUrl('/products')} onClick={closeCart}>Explorar productos</a>
             </div>
           ) : (
             <>

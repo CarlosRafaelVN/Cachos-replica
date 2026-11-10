@@ -26,7 +26,7 @@ export default function CatalogPromotions() {
               <span>OSIRIS</span><span>SPERRY</span><span>Keds</span><span>Joma</span>
             </div>
           </div>
-          <a className="catalog-hero__cta" href="/products?offers=1">Ver ofertas <b>→</b></a>
+          <a className="catalog-hero__cta" href={appUrl('/products?offers=1')}>Ver ofertas <b>→</b></a>
         </div>
         <div className="catalog-tape" aria-hidden="true">
           <div className="catalog-tape__track">
@@ -37,3 +37,4 @@ export default function CatalogPromotions() {
     </>
   );
 }
+import { appUrl } from '../../../utils/routes.js';

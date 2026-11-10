@@ -1,7 +1,9 @@
+import { appUrl } from '../../utils/routes.js';
+
 export default function CartHeader({ busqueda, setBusqueda, cantidad, abrirCarrito }) {
   return (
     <header className="header">
-      <a className="logo" href="/">
+      <a className="logo" href={appUrl('/')}>
         Mi<span>Tienda</span>
       </a>
       <input
