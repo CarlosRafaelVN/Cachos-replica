@@ -1,38 +1,24 @@
+const API_URL = '/api/v1/storefront/catalog';
+export async function obtenerCatalogo({
+  productType = 'Calzado',
+  gender = ['FEMENINO', 'UNISEX'],
+} = {}) {
+  const params = new URLSearchParams();
+  if (productType) params.append('productType', productType);
+  [].concat(gender).forEach((value) => params.append('gender', value));
 
-export default async function handler(req, res) {
-  if (req.method !== "GET") {
-    return res.status(405).json({
-      error: "Method not allowed"
-    });
-  }
+  const response = await fetch(`${API_URL}?${params.toString()}`, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'x-store-host': 'www.cachoscr.com',
 
-  try {
-    const url = new URL(
-      "https://xapi.madebyblume.com/v1/storefront/catalog"
-    );
+    },
+  });
 
-    url.searchParams.set("productType", "CALZADO");
-
-    const upstream = await fetch(url, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "x-store-host": "www.cachoscr.com"
-      }
-    });
-
-    const responseText = await upstream.text();
-
-    return res.status(200).json({
-      diagnostic: true,
-      upstreamStatus: upstream.status,
-      upstreamResponse: responseText
-    });
-
-  } catch (error) {
-    return res.status(500).json({
-      diagnostic: true,
-      error: error.message
-    });
-  }
+  if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+  return response.json();
 }
+
+export const obtenerCalzado = (options) =>
+  obtenerCatalogo({ productType: 'Calzado', ...options });
