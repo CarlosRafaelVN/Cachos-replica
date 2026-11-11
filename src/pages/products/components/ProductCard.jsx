@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useCarrito } from '../../../features/cart/useCarrito.js';
 import { obtenerDetalleProducto } from '../../../features/product/productApi.js';
 import { formatProductSize, SIZE_SYSTEMS } from '../../../features/product/productSizes.js';
@@ -13,26 +13,12 @@ const identifierValue = (value) => {
   return value?.code ?? value?.value ?? value?.name ?? null;
 };
 
-const trackMidaEvent = (eventName) => {
-  if (typeof window === 'undefined') return;
-  window.mdq = window.mdq || [];
-  window.mdq.push(['track', eventName]);
-};
-
-const getAddToCartTimeEvent = (durationMs) => {
-  if (durationMs <= 5000) return 'product_card_add_to_cart_time_0_5_seconds';
-  if (durationMs <= 15000) return 'product_card_add_to_cart_time_5_15_seconds';
-  if (durationMs <= 30000) return 'product_card_add_to_cart_time_15_30_seconds';
-  return 'product_card_add_to_cart_time_over_30_seconds';
-};
-
 export default function ProductCard({ product, className = '', staticOnly = false }) {
   const [sizeModalOpen, setSizeModalOpen] = useState(false);
   const [availableSizes, setAvailableSizes] = useState([]);
   const [sizeSystem, setSizeSystem] = useState('US');
   const [sizesLoading, setSizesLoading] = useState(false);
   const [sizesError, setSizesError] = useState('');
-  const addToCartStartedAt = useRef(null);
   const { agregar, openCart } = useCarrito();
   const raw = product.crudo ?? {};
   const referenceCode = identifierValue(product.referenceCode ?? raw.referenceCode ?? raw.reference);
@@ -101,11 +87,6 @@ export default function ProductCard({ product, className = '', staticOnly = fals
       imagenes: product.imagenes,
       precio: product.precio,
     }, variant.size);
-    trackMidaEvent('product_card_added_to_cart');
-    if (addToCartStartedAt.current !== null) {
-      trackMidaEvent(getAddToCartTimeEvent(performance.now() - addToCartStartedAt.current));
-      addToCartStartedAt.current = null;
-    }
     setSizeModalOpen(false);
     openCart();
   };
@@ -113,8 +94,6 @@ export default function ProductCard({ product, className = '', staticOnly = fals
   const openSizeModal = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    addToCartStartedAt.current = performance.now();
-    trackMidaEvent('product_card_add_to_cart_started');
     setAvailableSizes(isStaticProduct
       ? product.tallas.map((size) => ({
         size: String(size),
