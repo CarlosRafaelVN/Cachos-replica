@@ -87,6 +87,8 @@ export default function ProductCard({ product, className = '', staticOnly = fals
       imagenes: product.imagenes,
       precio: product.precio,
     }, variant.size);
+    window.mdq = window.mdq || [];
+    window.mdq.push(['track', 'product_added_to_cart']);
     setSizeModalOpen(false);
     openCart();
   };

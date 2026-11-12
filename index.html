@@ -4,11 +4,23 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cachos | Calzado y estilo</title>
     <!-- Anti-flickering script -->
     <script>
-      var timeout = 2000;
-      !function(h,i,d,e){var t,n=h.createElement("style");n.id=e,n.innerHTML='body{position:relative;overflow:hidden}body::after{position:absolute;top:0;bottom:0;left:0;right:0;content:"";background:#fff;z-index:2147483647}',h.head.appendChild(n),t=d,i.rmfk=function(){var t=h.getElementById(e);t&&t.parentNode.removeChild(t)},setTimeout(i.rmfk,t)}(document,window,timeout,"abhide");
+      var timeout = 2000
+      !(function (h, i, d, e) {
+        var t,
+          n = h.createElement('style')
+        ;((n.id = e),
+          (n.innerHTML =
+            'body{position:relative;overflow:hidden}body::after{position:absolute;top:0;bottom:0;left:0;right:0;content:"";background:#fff;z-index:2147483647}'),
+          h.head.appendChild(n),
+          (t = d),
+          (i.rmfk = function () {
+            var t = h.getElementById(e)
+            t && t.parentNode.removeChild(t)
+          }),
+          setTimeout(i.rmfk, t))
+      })(document, window, timeout, 'abhide')
     </script>
 
     <!-- Mida A/B Testing Script (Place in <HEAD>) -->
@@ -18,6 +30,8 @@
       async
       src="https://cdn.mida.so/js/optimize.js?key=5MbwXVxaRjQ8gYgD6p1oNq"
     ></script>
+
+    <title>Cachos | Calzado y estilo</title>
   </head>
   <body>
     <div id="root"></div>
