@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { obtenerRecomendaciones } from '../../features/product/productApi.js';
 import { useCarrito } from '../../features/cart/useCarrito.js';
 import { formatPrice } from '../../utils/formatPrice.js';
@@ -33,10 +33,18 @@ export default function CartDrawer() {
     agregar,
     isCartOpen,
     closeCart,
+    vaciar,
   } = useCarrito();
   const [recommendation, setRecommendation] = useState({ referenceCode: '', items: [], error: '' });
-  const isTestCart = items.some((item) => item.staticOnly);
-  const referenceCode = isTestCart ? '' : items.find((item) => item.referenceCode)?.referenceCode ?? '';
+  const [paymentComplete, setPaymentComplete] = useState(false);
+  const paymentConfirmationButton = useRef(null);
+  const referenceCode = items.find((item) => item.referenceCode)?.referenceCode ?? '';
+
+  const finishPayment = useCallback(() => {
+    vaciar();
+    setPaymentComplete(false);
+    closeCart();
+  }, [closeCart, vaciar]);
 
   useEffect(() => {
     if (!isCartOpen || !referenceCode || recommendation.referenceCode === referenceCode) return undefined;
@@ -58,7 +66,10 @@ export default function CartDrawer() {
   useEffect(() => {
     if (!isCartOpen) return undefined;
     const closeOnEscape = (event) => {
-      if (event.key === 'Escape') closeCart();
+      if (event.key === 'Escape') {
+        if (paymentComplete) finishPayment();
+        else closeCart();
+      }
     };
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -67,7 +78,11 @@ export default function CartDrawer() {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', closeOnEscape);
     };
-  }, [closeCart, isCartOpen]);
+  }, [closeCart, finishPayment, isCartOpen, paymentComplete]);
+
+  useEffect(() => {
+    if (paymentComplete) paymentConfirmationButton.current?.focus();
+  }, [paymentComplete]);
 
   if (!isCartOpen) return null;
 
@@ -79,16 +94,18 @@ export default function CartDrawer() {
         if (event.target === event.currentTarget) closeCart();
       }}
     >
-      <aside className="cart-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="cart-drawer-title">
+      <aside
+        className="cart-drawer__panel"
+        role="dialog"
+        aria-modal={paymentComplete ? undefined : 'true'}
+        aria-hidden={paymentComplete}
+        aria-labelledby="cart-drawer-title"
+      >
         <header className="cart-drawer__header">
           <h2 id="cart-drawer-title">Carrito <span>{cantidadTotal}</span></h2>
           <button type="button" className="cart-drawer__close" aria-label="Cerrar carrito" onClick={closeCart}>×</button>
         </header>
-        {isTestCart ? (
-          <p className="cart-drawer__login">Modo de prueba: los productos y el carrito son datos locales.</p>
-        ) : (
-          <p className="cart-drawer__login">¿Tiene una cuenta? <a href="https://www.cachoscr.com/s/login">Inicie sesión</a> para pagar más rápido.</p>
-        )}
+        <p className="cart-drawer__login">¿Tiene una cuenta? <a href="https://www.cachoscr.com/s/login">Inicie sesión</a> para pagar más rápido.</p>
 
         <div className="cart-drawer__body">
           {items.length === 0 ? (
@@ -152,17 +169,33 @@ export default function CartDrawer() {
         {items.length > 0 && (
           <footer className="cart-drawer__summary">
             <p><span>Total estimado</span><strong>{formatPrice(total)}</strong></p>
-            {isTestCart ? (
-              <small>Carrito de prueba: el pago está deshabilitado.</small>
-            ) : (
-              <>
-                <small>Aranceles e impuestos aplicables incluidos.</small>
-                <a href="https://www.cachoscr.com/checkout">Pagar</a>
-              </>
-            )}
+            <small>Aranceles e impuestos aplicables incluidos.</small>
+            <button type="button" onClick={() => setPaymentComplete(true)}>Pagar</button>
           </footer>
         )}
       </aside>
+      {paymentComplete && (
+        <div className="payment-confirmation" role="presentation">
+          <section
+            className="payment-confirmation__dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="payment-confirmation-title"
+            aria-describedby="payment-confirmation-message"
+            onKeyDown={(event) => {
+              if (event.key === 'Tab') {
+                event.preventDefault();
+                paymentConfirmationButton.current?.focus();
+              }
+            }}
+          >
+            <div className="payment-confirmation__icon" aria-hidden="true">✓</div>
+            <h2 id="payment-confirmation-title">Pago completado</h2>
+            <p id="payment-confirmation-message">Gracias por tu compra. Tu pedido se procesó correctamente.</p>
+            <button ref={paymentConfirmationButton} type="button" onClick={finishPayment}>Continuar</button>
+          </section>
+        </div>
+      )}
     </div>
   );
 }
