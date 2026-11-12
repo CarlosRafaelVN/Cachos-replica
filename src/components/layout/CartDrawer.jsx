@@ -3,6 +3,8 @@ import { obtenerRecomendaciones } from '../../features/product/productApi.js';
 import { useCarrito } from '../../features/cart/useCarrito.js';
 import { formatPrice } from '../../utils/formatPrice.js';
 
+const CRC_PER_USD = 450.09;
+
 function getUpsellProduct(item) {
   const product = item.product ?? item;
   const image = product.imageUrl
@@ -43,9 +45,9 @@ export default function CartDrawer() {
   const confirmPayment = () => {
     window.mdq = window.mdq || [];
     window.mdq.push(['track', 'Purchase', {
-      revenue: total,
+      revenue: Number((total / CRC_PER_USD).toFixed(2)),
       quantity: cantidadTotal,
-      currency: 'CRC',
+      currency: 'USD',
     }]);
     setPaymentComplete(true);
   };
