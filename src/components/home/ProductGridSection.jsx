@@ -76,7 +76,7 @@ export default function ProductGridSection({
         </div>
       )}
       {isLook && (
-        <a className="look-section__all" href="https://www.cachoscr.com/catalog?productType=ACCESORIO">
+        <a className="look-section__all" href={/* https://www.cachoscr.com/catalog?productType=ACCESORIO */ undefined}>
           Ver todos los accesorios <span aria-hidden="true">→</span>
         </a>
       )}
