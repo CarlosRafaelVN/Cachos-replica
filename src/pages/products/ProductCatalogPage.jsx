@@ -114,9 +114,7 @@ export default function ProductCatalogPage() {
             resetFilters={resetFilters}
           />
           <div className="products-results" aria-live="polite">
-            <div className="products-state" role="status">
-              Catálogo de prueba con datos estáticos. Precios, tallas y disponibilidad son ilustrativos; las compras están deshabilitadas.
-            </div>
+
             {filteredProducts.length === 0 && <div className="products-state">No encontramos productos con estos filtros.</div>}
             <div className="products-grid">
               {pageProducts.map((product) => <ProductCard key={product.id} product={product} staticOnly />)}
