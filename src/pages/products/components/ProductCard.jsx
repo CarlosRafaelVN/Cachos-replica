@@ -98,6 +98,7 @@ export default function ProductCard({ product, className = '', staticOnly = fals
     event.stopPropagation();
     window.mdq = window.mdq || [];
     window.mdq.push(['track', 'button_click_add_to_card']);
+    window.mdq.push(['track', 'size_modal_opened']);
     setAvailableSizes(isStaticProduct
       ? product.tallas.map((size) => ({
         size: String(size),
