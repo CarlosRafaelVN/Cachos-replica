@@ -19,6 +19,12 @@ export default function ProductCard({ product, className = '', staticOnly = fals
   const [sizeSystem, setSizeSystem] = useState('US');
   const [sizesLoading, setSizesLoading] = useState(false);
   const [sizesError, setSizesError] = useState('');
+  const changeSizeSystem = (system) => {
+    if (system === sizeSystem) return;
+    setSizeSystem(system);
+    window.mdq = window.mdq || [];
+    window.mdq.push(['track', 'size_system_changed']);
+  };
   const { agregar, openCart } = useCarrito();
   const raw = product.crudo ?? {};
   const referenceCode = identifierValue(product.referenceCode ?? raw.referenceCode ?? raw.reference);
@@ -174,7 +180,7 @@ export default function ProductCard({ product, className = '', staticOnly = fals
                     type="button"
                     className={system === sizeSystem ? 'is-active' : ''}
                     aria-pressed={system === sizeSystem}
-                    onClick={() => setSizeSystem(system)}
+                    onClick={() => changeSizeSystem(system)}
                   >
                     Tallas {system === 'CM' ? 'Cm' : system}
                   </button>

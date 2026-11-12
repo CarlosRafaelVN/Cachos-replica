@@ -444,6 +444,12 @@ export default function ProductPage() {
     staticDetail?.products[0] ? String(staticDetail.products[0].externalId) : '',
   );
   const [sizeSystem, setSizeSystem] = useState('US');
+  const changeSizeSystem = (system) => {
+    if (system === sizeSystem) return;
+    setSizeSystem(system);
+    window.mdq = window.mdq || [];
+    window.mdq.push(['track', 'size_system_changed']);
+  };
   const [quantity, setQuantity] = useState(1);
   const [availabilityResult, setAvailabilityResult] = useState(null);
   const [recommendationResult, setRecommendationResult] = useState(null);
@@ -693,7 +699,7 @@ export default function ProductPage() {
                           type="button"
                           className={system === sizeSystem ? 'is-active' : ''}
                           aria-pressed={system === sizeSystem}
-                          onClick={() => setSizeSystem(system)}
+                          onClick={() => changeSizeSystem(system)}
                         >
                           Tallas {system}
                         </button>
